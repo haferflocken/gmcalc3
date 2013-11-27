@@ -2,16 +2,12 @@ package org.gmcalc3;
 
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.app.ActionBar.Tab;
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
