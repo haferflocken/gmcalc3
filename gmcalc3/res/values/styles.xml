@@ -1,0 +1,42 @@
+<resources>
+
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    	<item name="android:actionBarStyle">@style/ActionBarTheme</item>
+        <item name="android:actionBarWidgetTheme">@style/ActionBarWidgetTheme</item>
+    </style>
+    
+    <!-- Action bar theme. -->
+    <style name="ActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+    	<item name="android:background">@drawable/gradient_actionbar</item>
+    </style>
+    
+    <style name="ActionBarWidgetTheme" parent="@android:style/Theme.Holo" >
+    	<item name="android:textColorHint">@color/text_hint</item>
+    </style>
+    
+    <!-- Nav drawer theme. -->
+    <style name="NavDrawerTheme" parent="@android:style/Widget.Holo.Light" >
+    	<item name="android:divider">@android:color/transparent</item>
+        <item name="android:dividerHeight">0dp</item>
+        <item name="android:layout_width">240dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_gravity">start</item>
+        <item name="android:background">@color/background_light</item>
+    </style>
+    
+
+</resources>

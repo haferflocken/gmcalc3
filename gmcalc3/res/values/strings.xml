@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">GM Calc 3</string>
+    <string name="drawer_open">Open drawer</string>
+    <string name="drawer_close">Close drawer</string>
+    <string name="label_device_worlds">Device Worlds</string>
+    <string name="label_table">Table</string>
+    <string name="label_table_worlds">Table Worlds</string><string name="label_settings">Settings</string>
+    
+
+</resources>
