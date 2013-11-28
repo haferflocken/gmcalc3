@@ -8,10 +8,10 @@ import java.util.Comparator;
 import java.util.TreeMap;
 import java.util.Map;
 
-import org.haferlib.util.expression.ConstantExpression;
-import org.haferlib.util.expression.Expression;
-import org.haferlib.util.expression.ExpressionBuilder;
-import org.haferlib.util.expression.VariableExpression;
+import org.hafermath.expression.ConstantExpression;
+import org.hafermath.expression.Expression;
+import org.hafermath.expression.ExpressionBuilder;
+import org.hafermath.expression.VariableExpression;
 
 public class StatMap {
 	
@@ -48,7 +48,7 @@ public class StatMap {
 	
 	// Constructors.
 	public StatMap() {
-		stats = new TreeMap<>();
+		stats = new TreeMap<String, Stat>();
 	}
 	
 	public StatMap(Map<?, ?> rawStats, ExpressionBuilder expBuilder) {
@@ -123,7 +123,7 @@ public class StatMap {
 	// Return a copy of the tree in this StatMap. While changing the stats will affect this StatMap (it isn't a deep copy),
 	// changing the returned tree will not affect this StatMap.
 	public TreeMap<String, Stat> copyTree() {
-		TreeMap<String, Stat> out = new TreeMap<>();
+		TreeMap<String, Stat> out = new TreeMap<String, Stat>();
 		out.putAll(stats);
 		return out;
 	}
@@ -136,7 +136,7 @@ public class StatMap {
 		Arrays.sort(statVals, new StatEvalOrderComparator());
 		
 		// Make a map of the expressions.
-		TreeMap<String, Expression> statExpressions = new TreeMap<>();
+		TreeMap<String, Expression> statExpressions = new TreeMap<String, Expression>();
 		for (Map.Entry<String, Stat> entry : stats.entrySet()) {
 			Expression exp = entry.getValue().getExpression();
 			if (exp != null)

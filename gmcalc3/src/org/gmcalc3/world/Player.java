@@ -4,10 +4,6 @@ package org.gmcalc3.world;
 
 import java.util.Map;
 
-import org.gmcalc2.World;
-import org.haferlib.util.ListBag;
-import org.haferlib.util.Log;
-
 public class Player {
 
 	// Keys for loading.
@@ -28,8 +24,8 @@ public class Player {
 		this.id = id;
 		name = DEFAULT_NAME;
 		statMap = new StatMap();
-		equipped = new ListBag<>();
-		inventory = new ListBag<>();
+		equipped = new ListBag<Item>();
+		inventory = new ListBag<Item>();
 	}
 
 	public Player(World world, String id, Map<String, Object> values) {
@@ -52,7 +48,7 @@ public class Player {
 			}
 		}
 
-		Log.getDefaultLog().info("Player (" + hashCode() + ") " + name + " in world " + world.getName() + " loaded " + equipped.size() + " equipped items.");
+		//Log.getDefaultLog().info("Player (" + hashCode() + ") " + name + " in world " + world.getName() + " loaded " + equipped.size() + " equipped items.");
 		// Get the inventory items.
 		val = values.get(INVENTORY_KEY);
 		if (val instanceof Object[]) {
@@ -63,7 +59,7 @@ public class Player {
 				}
 			}
 		}
-		Log.getDefaultLog().info("Player (" + hashCode() + ") " + name + " in world " + world.getName() + " loaded " + inventory.size() + " inventory items.");
+		//Log.getDefaultLog().info("Player (" + hashCode() + ") " + name + " in world " + world.getName() + " loaded " + inventory.size() + " inventory items.");
 
 		// Recalculate the stats.
 		recalculateStats();
@@ -124,7 +120,7 @@ public class Player {
 				|| !(data[1] instanceof Object[])
 				|| !(data[2] instanceof Object[])
 				|| !(data[3] instanceof String)) {
-			Log.getDefaultLog().info("Invalid item declaration in player " + name);
+			//Log.getDefaultLog().info("Invalid item declaration in player " + name);
 			return;
 		}
 
@@ -139,7 +135,7 @@ public class Player {
 		// Make the itemBase.
 		ItemBase itemBase = world.getItemBase(rawItemBase);
 		if (itemBase == null) {
-			Log.getDefaultLog().info("Could not find itemBase " + rawItemBase + " for player " + name);
+			//Log.getDefaultLog().info("Could not find itemBase " + rawItemBase + " for player " + name);
 			return;
 		}
 

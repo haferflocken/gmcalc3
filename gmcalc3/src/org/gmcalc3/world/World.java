@@ -12,19 +12,19 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Arrays;
 
-import org.newdawn.slick.Color;
-import org.gmcalc2.item.*;
-import org.haferlib.util.expression.ExpressionBuilder;
+import org.hafermath.expression.ExpressionBuilder;
+
+import android.graphics.Color;
 
 public class World {
 	
 	// The class for RarityColors.
 	public static class RarityColor implements Comparable<RarityColor> {
 		
-		private Color color;
+		private int color;
 		private int rarity;
 		
-		public RarityColor(Color c, int r) {
+		public RarityColor(int c, int r) {
 			color = c;
 			rarity = r;
 		}
@@ -36,17 +36,9 @@ public class World {
 			if (rarity > other.rarity)
 				return 1;
 			// If rarities are equal, compare color values.
-			if (color.getRed() < other.color.getRed()) 
+			if (color < other.color)
 				return -1;
-			if (color.getRed() > other.color.getRed())
-				return 1;
-			if (color.getGreen() < other.color.getGreen())
-				return -1;
-			if (color.getGreen() > other.color.getGreen())
-				return 1;
-			if (color.getBlue() < other.color.getBlue())
-				return -1;
-			if (color.getBlue() > other.color.getBlue())
+			if (color > other.color)
 				return 1;
 			return 0;
 		}
@@ -54,7 +46,7 @@ public class World {
 		public boolean equals(Object other) {
 			if (other instanceof RarityColor) {
 				RarityColor o = (RarityColor)other;
-				if (color.equals(o.color) && rarity == o.rarity)
+				if (color == o.color && rarity == o.rarity)
 					return true;
 			}
 			return false;
@@ -92,8 +84,8 @@ public class World {
 	// Set the rules to default values.
 	public void setRulesToDefault() {
 		name = worldLoc;
-		rarityColors = new RarityColor[] { new RarityColor(Color.white, Integer.MIN_VALUE) };
-		playerStatCategories = new LinkedHashMap<>();
+		rarityColors = new RarityColor[] { new RarityColor(android.R.color.white, Integer.MIN_VALUE) };
+		playerStatCategories = new LinkedHashMap<String, String[]>();
 		playerBaseStats = null;
 	}
 	
@@ -110,7 +102,7 @@ public class World {
 		if (val instanceof Map<?, ?>) {
 			//Get the map and make an ArrayList to put the parsed colors into.
 			Map<?, ?> rarityMap = (Map<?, ?>)val;
-			ArrayList<RarityColor> rarityColorList = new ArrayList<>();
+			ArrayList<RarityColor> rarityColorList = new ArrayList<RarityColor>();
 			
 			// Look through the map, parsing out rarity colors.
 			for (Map.Entry<?, ?> entry : rarityMap.entrySet()) {
@@ -121,7 +113,7 @@ public class World {
 						int red = (Integer)rawColor[0];
 						int green = (Integer)rawColor[1];
 						int blue = (Integer)rawColor[2];
-						Color rarityColor = new Color(red, green, blue);
+						int rarityColor = Color.rgb(red, green, blue);
 						rarityColorList.add(new RarityColor(rarityColor, rarityVal));
 					}
 				}
@@ -138,7 +130,7 @@ public class World {
 		val = rawRules.get(PLAYERSTATCATEGORIES_KEY);
 		if (val instanceof Map<?, ?>) {
 			Map<?, ?> catMap = (Map<?, ?>)val;
-			ArrayList<String> catValBuilder = new ArrayList<>();
+			ArrayList<String> catValBuilder = new ArrayList<String>();
 			for (Map.Entry<?, ?> entry : catMap.entrySet()) {
 				if (entry.getKey() instanceof String && entry.getValue() instanceof Object[]) {
 					String catKey = (String)entry.getKey();
@@ -217,13 +209,13 @@ public class World {
 	}
 	
 	// Get the rarity color of an item.
-	public Color getRarityColor(Item item) {
+	public int getRarityColor(Item item) {
 		int rarity = item.getRarity();
 		for (int i = rarityColors.length - 1; i > -1; i--) {
 			if (rarity >= rarityColors[i].rarity)
 				return rarityColors[i].color;
 		}
-		return Color.black;
+		return android.R.color.black;
 	}
 	
 	// Helper method to get components matching from a map.
@@ -292,7 +284,7 @@ public class World {
 			return makeItem(new Component[0], itemBase);
 		
 		// Otherwise, find the materials and make the item.
-		ArrayList<Component> materialList = new ArrayList<>();
+		ArrayList<Component> materialList = new ArrayList<Component>();
 		for (int i = 0; i < defMatNames.length; i++) {
 			Component mat = materials.get(defMatNames[i]);
 			if (mat != null)

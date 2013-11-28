@@ -1,10 +1,5 @@
 package org.gmcalc3.world;
 
-import java.util.Arrays;
-
-import org.gmcalc2.World;
-import org.haferlib.util.Log;
-
 /**
  * An item contains an ItemBase, an array of Components representing the materials
  * applied to the ItemBase, and an array of Components representing the prefixes
@@ -142,8 +137,8 @@ public class Item {
 	
 	// Set the prefixes to something.
 	public void setPrefixes(Component[] newPrefixes) {
-		Log.getDefaultLog().info("Changing prefixes from "
-				+ Arrays.toString(prefixes) + " to " + Arrays.toString(newPrefixes));
+		//Log.getDefaultLog().info("Changing prefixes from "
+		//		+ Arrays.toString(prefixes) + " to " + Arrays.toString(newPrefixes));
 		
 		setPrefixesFilter(newPrefixes);
 		recalculateName();
@@ -179,8 +174,8 @@ public class Item {
 	
 	// Set the materials to something.
 	public void setMaterials(Component[] newMaterials) {
-		Log.getDefaultLog().info("Changing materials from "
-				+ Arrays.toString(materials) + " to " + Arrays.toString(newMaterials));
+		//Log.getDefaultLog().info("Changing materials from "
+		//		+ Arrays.toString(materials) + " to " + Arrays.toString(newMaterials));
 		
 		setMaterialsFilter(newMaterials);
 		
@@ -191,8 +186,8 @@ public class Item {
 	
 	// Set the item base to something.
 	public void setItemBase(ItemBase newItemBase) {
-		Log.getDefaultLog().info("Changing item base from "
-				+ itemBase.getName() + " to " + newItemBase.getName());
+		//Log.getDefaultLog().info("Changing item base from "
+		//		+ itemBase.getName() + " to " + newItemBase.getName());
 		
 		// Assign the item base.
 		itemBase = newItemBase;

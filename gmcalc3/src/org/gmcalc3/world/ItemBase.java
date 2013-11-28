@@ -2,7 +2,7 @@ package org.gmcalc3.world;
 
 import java.util.Map;
 
-import org.haferlib.util.expression.ExpressionBuilder;
+import org.hafermath.expression.ExpressionBuilder;
 
 public class ItemBase extends Component {
 	
