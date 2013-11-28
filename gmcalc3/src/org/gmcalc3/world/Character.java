@@ -4,7 +4,7 @@ package org.gmcalc3.world;
 
 import java.util.Map;
 
-public class Player {
+public class Character {
 
 	// Keys for loading.
 	public static final String DEFAULT_NAME = "Unnamed";
@@ -19,7 +19,7 @@ public class Player {
 	private ListBag<Item> equipped, inventory;
 
 	// Constructors.
-	public Player(World world, String id) {
+	public Character(World world, String id) {
 		this.world = world;
 		this.id = id;
 		name = DEFAULT_NAME;
@@ -28,7 +28,7 @@ public class Player {
 		inventory = new ListBag<Item>();
 	}
 
-	public Player(World world, String id, Map<String, Object> values) {
+	public Character(World world, String id, Map<String, Object> values) {
 		this(world, id);
 
 		Object val;
@@ -95,7 +95,7 @@ public class Player {
 		statMap.clear();
 		
 		// If a player base is defined in the world, merge it into the stats.
-		StatMap baseStats = world.getPlayerBaseStats();
+		StatMap baseStats = world.getCharacterBaseStats();
 		if (baseStats != null)
 			statMap.mergeMap(baseStats);
 

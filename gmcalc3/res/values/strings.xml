@@ -7,6 +7,8 @@
     <string name="label_device_worlds">Device Worlds</string>
     <string name="label_table">Table</string>
     <string name="label_table_worlds">Table Worlds</string><string name="label_settings">Settings</string>
+    <string name="label_character_detail">Character Detail</string>
+    <string name="character_detail_stats">STATS</string><string name="character_detail_equipped">EQUIPPED</string><string name="character_detail_inventory">INVENTORY</string>
     
 
 </resources>

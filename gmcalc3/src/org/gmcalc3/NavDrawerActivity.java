@@ -91,6 +91,10 @@ public abstract class NavDrawerActivity extends Activity {
 		value.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		drawerItemMap.put(key, value);
 		
+		key = getResources().getString(R.string.label_character_detail);
+		value = new Intent("org.gmcalc3.CharacterDetailActivity");
+		drawerItemMap.put(key, value);
+		
 		updatedDrawerItemMap();
 	}
 	

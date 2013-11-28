@@ -3,42 +3,13 @@ package org.gmcalc3;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.ListFragment;
 import android.os.Bundle;
-import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class TableActivity extends NavDrawerActivity {
-	
-	private class TabAdapter extends FragmentPagerAdapter {
-		
-		private String[] titles;
-		private Fragment[] fragments;
-
-		public TabAdapter(FragmentManager fm, String[] titles, Fragment[] fragments) {
-			super(fm);
-			this.titles = titles;
-			this.fragments = fragments;
-		}
-		
-		@Override
-		public Fragment getItem(int position) {
-			return fragments[position];
-		}
-		
-		@Override
-		public int getCount() {
-			return fragments.length;
-		}
-		
-		@Override
-		public CharSequence getPageTitle(int position) {
-			return titles[position];
-		}
-	}
 	
 	private WorldExplorerFragment worldExplorer;
 	private ListFragment charactersFragment;

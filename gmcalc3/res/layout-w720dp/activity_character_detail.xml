@@ -1,0 +1,102 @@
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" >
+	
+	<!--  The title bar. -->
+	<LinearLayout
+		android:id="@+id/titleBar"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentLeft="true"
+		android:orientation="horizontal" >
+		
+		<TextView 
+			android:id="@+id/statsTitle"
+			android:layout_width="match_parent"
+			android:layout_height="48sp"
+			android:layout_gravity="top|left"
+			android:layout_weight="1"
+			android:layout_marginLeft="12dp"
+			android:text="@string/character_detail_stats"
+			android:textColor="@color/titlestrip_text_color"
+			android:textStyle="bold"
+			android:gravity="left|center_vertical" />
+		
+		<TextView 
+			android:id="@+id/equippedTitle"
+			android:layout_width="match_parent"
+			android:layout_height="48sp"
+			android:layout_gravity="top|center_horizontal"
+			android:layout_weight="1"
+			android:layout_marginLeft="12dp"
+			android:text="@string/character_detail_equipped"
+			android:textColor="@color/titlestrip_text_color"
+			android:textStyle="bold"
+			android:gravity="left|center_vertical" />
+		
+		<TextView 
+			android:id="@+id/inventoryTitle"
+			android:layout_width="match_parent"
+			android:layout_height="48sp"
+			android:layout_gravity="top|right"
+			android:layout_weight="1"
+			android:layout_marginLeft="12dp"
+			android:text="@string/character_detail_inventory"
+			android:textColor="@color/titlestrip_text_color"
+			android:textStyle="bold"
+			android:gravity="left|center_vertical" />
+		
+	</LinearLayout>
+	
+	<!-- A divider. -->
+	<View
+		android:background="@color/titlestrip_underline_color"
+		android:layout_width="match_parent"
+		android:layout_height="2dp"
+		android:layout_alignParentLeft="true"
+		android:layout_alignBottom="@+id/titleBar" />
+	
+	<!-- The columns. -->
+	<LinearLayout
+		android:id="@+id/fragmentColumns"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_below="@+id/titleBar"
+		android:layout_alignParentLeft="true"
+		android:orientation="horizontal" >
+		
+		<fragment
+			android:id="@+id/statsFragment"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_gravity="top|left"
+			android:layout_weight="1"
+			android:layout_marginLeft="4dp"
+			android:layout_marginRight="4dp"
+			android:name="android.app.ListFragment" />
+		
+		<fragment
+			android:id="@+id/equippedFragment"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_gravity="top|center_horizontal"
+			android:layout_weight="1"
+			android:layout_marginLeft="4dp"
+			android:layout_marginRight="4dp"
+			android:name="android.app.ListFragment" />
+		
+		<fragment
+			android:id="@+id/inventoryFragment"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_gravity="top|right"
+			android:layout_weight="1"
+			android:layout_marginLeft="4dp"
+			android:layout_marginRight="4dp"
+			android:name="android.app.ListFragment" />
+		
+	</LinearLayout>
+
+</RelativeLayout>

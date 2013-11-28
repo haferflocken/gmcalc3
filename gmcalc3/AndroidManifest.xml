@@ -6,7 +6,7 @@
 
 	<uses-sdk
 		android:minSdkVersion="15"
-		android:targetSdkVersion="18" />
+		android:targetSdkVersion="19" />
 
 	<application
 		android:allowBackup="true"
@@ -48,6 +48,16 @@
 			
 			<intent-filter>
 				<action android:name="org.gmcalc3.SettingsActivity" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		
+		<activity
+			android:name="org.gmcalc3.CharacterDetailActivity"
+			android:label="@string/label_character_detail"  >
+			
+			<intent-filter>
+				<action android:name="org.gmcalc3.CharacterDetailActivity" />
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>

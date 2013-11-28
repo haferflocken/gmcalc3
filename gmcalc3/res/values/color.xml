@@ -4,5 +4,8 @@
     <color name="dark_gray">#FF4C4C4C</color>
     <color name="medium_gray">#FF5C5C5C</color>
     <color name="text_hint">#C8FFFFFF</color>
+    <color name="titlestrip_underline_color">#1A000000</color>
+    <color name="titlestrip_text_color">#FF666666</color>
+    <color name="titlestrip_indicator_color">#FF5C5C5C</color>
 
 </resources>

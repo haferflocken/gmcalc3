@@ -60,15 +60,15 @@ public class World {
 	public static final String PLAYERBASESTATS_KEY = "playerBase";
 	
 	// Instance fields.
-	private String worldLoc;										// The location of the world in the file GMCalc2.
-	private String name;											// The name of the world.
-	private RarityColor[] rarityColors;								// The rarity colors that are displayed in this world.
-	private LinkedHashMap<String, String[]> playerStatCategories;	// The categories stats are sorted into in PlayerTabs.
-	private StatMap playerBaseStats;								// The player's base stats.
-	private Map<String, Component> prefixes;						// The prefixes.
-	private Map<String, Component> materials;						// The materials.
-	private Map<String, ItemBase> itemBases;						// The itemBases.
-	private Map<String, Player> players;							// The players.
+	private String worldLoc;											// The location of the world in the file GMCalc2.
+	private String name;												// The name of the world.
+	private RarityColor[] rarityColors;									// The rarity colors that are displayed in this world.
+	private LinkedHashMap<String, String[]> characterStatCategories;	// The categories stats are sorted into in PlayerTabs.
+	private StatMap characterBaseStats;									// The player's base stats.
+	private Map<String, Component> prefixes;							// The prefixes.
+	private Map<String, Component> materials;							// The materials.
+	private Map<String, ItemBase> itemBases;							// The itemBases.
+	private Map<String, Character> characters;							// The characters.
 	
 	// Constructor.
 	public World(Map<String, Object> ruleValues, ExpressionBuilder expBuilder, Map<String, Component> prefixes,
@@ -78,15 +78,15 @@ public class World {
 		this.prefixes = prefixes;
 		this.materials = materials;
 		this.itemBases = itemBases;
-		players = null;
+		characters = null;
 	}
 	
 	// Set the rules to default values.
 	public void setRulesToDefault() {
 		name = worldLoc;
 		rarityColors = new RarityColor[] { new RarityColor(android.R.color.white, Integer.MIN_VALUE) };
-		playerStatCategories = new LinkedHashMap<String, String[]>();
-		playerBaseStats = null;
+		characterStatCategories = new LinkedHashMap<String, String[]>();
+		characterBaseStats = null;
 	}
 	
 	// Set the rules using loaded data.
@@ -141,7 +141,7 @@ public class World {
 					}
 					String[] catVal = catValBuilder.toArray(new String[catValBuilder.size()]);
 					catValBuilder.clear();
-					playerStatCategories.put(catKey, catVal);
+					characterStatCategories.put(catKey, catVal);
 				}
 			}
 		}
@@ -149,7 +149,7 @@ public class World {
 		// Get the player base stats.
 		val = rawRules.get(PLAYERBASESTATS_KEY);
 		if (val instanceof Map<?, ?>) {
-			playerBaseStats = new StatMap((Map<?, ?>)val, expBuilder);
+			characterBaseStats = new StatMap((Map<?, ?>)val, expBuilder);
 		}
 	}
 	
@@ -158,14 +158,14 @@ public class World {
 		return name;
 	}
 	
-	// Get the player stat categories.
-	public Map<String, String[]> getPlayerStatCategories() {
-		return playerStatCategories;
+	// Get the character stat categories.
+	public Map<String, String[]> getCharacterStatCategories() {
+		return characterStatCategories;
 	}
 	
-	// Get the player base stats.
-	public StatMap getPlayerBaseStats() {
-		return playerBaseStats;
+	// Get the character base stats.
+	public StatMap getCharacterBaseStats() {
+		return characterBaseStats;
 	}
 	
 	// Get a prefix.
@@ -199,13 +199,13 @@ public class World {
 	}
 	
 	// Get a player.
-	public Player getPlayer(String playerFile) {
-		return players.get(playerFile);
+	public Character getCharacter(String playerFile) {
+		return characters.get(playerFile);
 	}
 
 	// Get the player map.
-	public Map<String, Player> getPlayerMap() {
-		return players;
+	public Map<String, Character> getCharacterMap() {
+		return characters;
 	}
 	
 	// Get the rarity color of an item.
@@ -264,14 +264,14 @@ public class World {
 		return itemBases.size();
 	}
 	
-	// Get the number of players.
-	public int getNumPlayers() {
-		return players.size();
+	// Get the number of characters.
+	public int getNumCharacters() {
+		return characters.size();
 	}
 
-	// Set the player map.
-	public void setPlayerMap(Map<String, Player> p) {
-		players = p;
+	// Set the character map.
+	public void setPlayerMap(Map<String, Character> c) {
+		characters = c;
 	}
 	
 	// Make an item with no prefixes and with default materials.
