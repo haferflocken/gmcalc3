@@ -10,8 +10,10 @@ import android.app.Fragment;
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.widget.ExpandableListAdapter;
 import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
+import android.widget.SimpleExpandableListAdapter;
 
 import org.gmcalc3.world.Character;
 
@@ -19,9 +21,9 @@ import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 
 public class CharacterDetailActivity extends Activity {
 	
-	private ListFragment statsFragment;
-	private ListFragment equippedFragment;
-	private ListFragment inventoryFragment;
+	private ExpandableListFragment statsFragment;
+	private ExpandableListFragment equippedFragment;
+	private ExpandableListFragment inventoryFragment;
 	private ViewPager tabPager;
 	private Character character;
 	
@@ -50,17 +52,17 @@ public class CharacterDetailActivity extends Activity {
 	// Set up the tabbed layout when it's being used.
 	private void setupTabbedLayout() {
 		// Create the stats fragment.
-		statsFragment = new ListFragment();
+		statsFragment = new ExpandableListFragment();
 		Bundle sArgs = new Bundle();
 		statsFragment.setArguments(sArgs);
 						
 		// Create the equipped fragment.
-		equippedFragment = new ListFragment();
+		equippedFragment = new ExpandableListFragment();
 		Bundle eArgs = new Bundle();
 		equippedFragment.setArguments(eArgs);
 						
 		// Create the inventory fragment.
-		inventoryFragment = new ListFragment();
+		inventoryFragment = new ExpandableListFragment();
 		Bundle iArgs = new Bundle();
 		inventoryFragment.setArguments(iArgs);
 						
@@ -86,51 +88,72 @@ public class CharacterDetailActivity extends Activity {
 		tabPager = null;
 		
 		// Get the fragments as they were defined in XML.
-		statsFragment = (ListFragment)getFragmentManager().findFragmentById(R.id.statsFragment);
-		equippedFragment = (ListFragment)getFragmentManager().findFragmentById(R.id.equippedFragment);
-		inventoryFragment = (ListFragment)getFragmentManager().findFragmentById(R.id.inventoryFragment);
+		statsFragment = (ExpandableListFragment)getFragmentManager().findFragmentById(R.id.statsFragment);
+		equippedFragment = (ExpandableListFragment)getFragmentManager().findFragmentById(R.id.equippedFragment);
+		inventoryFragment = (ExpandableListFragment)getFragmentManager().findFragmentById(R.id.inventoryFragment);
 	}
 	
-	private List<Map<String, ?>> createMap(String[] titles) {
+	private List<Map<String, ?>> createMaps(String[] strings) {
 		List<Map<String, ?>> out = new ArrayList<Map<String, ?>>();
-		for (String title : titles) {
+		for (String s : strings) {
 			Map<String, String> row = new HashMap<String, String>();
-			row.put("text1", title);
+			row.put("text1", s);
 			out.add(row);
 		}
 		return out;
 	}
 	
-	private ListAdapter createListAdapter(List<? extends Map<String, ?>> map) {
-		int resource = android.R.layout.simple_list_item_1;
-		String[] from = new String[] { "text1" };
-		int[] to = new int[] { android.R.id.text1 };
-		return new SimpleAdapter(this, map, resource, from, to);
+	private List<List<Map<String, ?>>> createChildMaps(String[][] strings) {
+		List<List<Map<String, ?>>> out = new ArrayList<List<Map<String, ?>>>();
+		for (String[] s : strings) {
+			out.add(createMaps(s));
+		}
+		return out;
+	}
+	
+	private ExpandableListAdapter createExpandableListAdapter(List<? extends Map<String, ?>> groupData,
+			List<? extends List<? extends Map<String, ?>>> childData) {
+		/* SimpleExpandableListAdapter(Context context, 
+			List<? extends Map<String, ?>> groupData, int groupLayout, String[] groupFrom, int[] groupTo,
+			List<? extends Map<String, ?>> childData, int childLayout, String[] childFrom, int[] childTo)
+		*/
+		int groupLayout = android.R.layout.simple_expandable_list_item_1;
+		String[] groupFrom = new String[] { "text1" };
+		int[] groupTo = new int[] { android.R.id.text1 };
+		int childLayout = android.R.layout.simple_list_item_1;
+		String[] childFrom = new String[] { "text1" };
+		int[] childTo = new int[] { android.R.id.text1 };
+		return new SimpleExpandableListAdapter(this, groupData, groupLayout, groupFrom, groupTo,
+				childData, childLayout, childFrom, childTo);
 	}
 	
 	// Populate the stats fragment using the character.
 	protected void populateStatsFragment() {
 		// Populate the fragment with bullshit.
-		statsFragment.setListAdapter(createListAdapter(createMap( new String[] {
-				"Mumbo", "Jumbo", "Wumbo", "Stats are cool"
-		})));
+		statsFragment.setExpandableListAdapter(createExpandableListAdapter(
+				createMaps(new String[] { "Mumbo", "Jumbo", "Wumbo", "Stats are cool" }),
+				createChildMaps(new String[][] {
+						{ "Cumbo" }, { "Bumbo" }, { "Sumbo" }, { "I disagree." },
+				})));
 	}
 
 	// Populate the equipped fragment using the character.
 	protected void populateEquippedFragment() {
 		// Populate the fragment with bullshit.
-		equippedFragment.setListAdapter(createListAdapter(createMap( new String[] {
-				"King Dick Alpha Cleaver", "Adamantite Chainsword", "Wizard Robes"
-		})));
+		equippedFragment.setExpandableListAdapter(createExpandableListAdapter(
+				createMaps(new String[] { "King Dick Alpha Cleaver", "Adamantite Chainsword", "Wizard Robes" }),
+				createChildMaps(new String[][] {
+						{ "Damn this thing is fine" }, { "WHOOAAAA" }, { "YEAH BWOY MAGICKS" },
+				})));
 	}
 	
 	// Populate the inventory fragment using the character.
 	protected void populateInventoryFragment() {
 		// Populate the fragment with bullshit.
-		inventoryFragment.setListAdapter(createListAdapter(createMap( new String[] {
-				"Gold x100", "Chainmail Armor", "Bucket of Fish", "Miniature Jesus Bobblehead",
-				"Kanye West", "C++ for Java Programmers", "Google Chrome", "Miley Cyrus", "Nexus 5",
-				"Antonio Esteban Banderez"
-		})));
+		inventoryFragment.setExpandableListAdapter(createExpandableListAdapter(
+				createMaps(new String[] { "Gold x100" }),
+				createChildMaps(new String[][] {
+						{ "Swag in solid form." },
+				})));
 	}
 }

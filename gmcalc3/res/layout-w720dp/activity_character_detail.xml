@@ -75,7 +75,7 @@
 			android:layout_weight="1"
 			android:layout_marginLeft="4dp"
 			android:layout_marginRight="4dp"
-			android:name="android.app.ListFragment" />
+			android:name="org.gmcalc3.ExpandableListFragment" />
 		
 		<fragment
 			android:id="@+id/equippedFragment"
@@ -85,7 +85,7 @@
 			android:layout_weight="1"
 			android:layout_marginLeft="4dp"
 			android:layout_marginRight="4dp"
-			android:name="android.app.ListFragment" />
+			android:name="org.gmcalc3.ExpandableListFragment" />
 		
 		<fragment
 			android:id="@+id/inventoryFragment"
@@ -95,7 +95,7 @@
 			android:layout_weight="1"
 			android:layout_marginLeft="4dp"
 			android:layout_marginRight="4dp"
-			android:name="android.app.ListFragment" />
+			android:name="org.gmcalc3.ExpandableListFragment" />
 		
 	</LinearLayout>
 
