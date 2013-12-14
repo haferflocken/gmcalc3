@@ -1,8 +1,9 @@
 package org.gmcalc3.world;
 
-import java.util.Map;
-
 import org.hafermath.expression.ExpressionBuilder;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class ItemBase extends Component {
 	
@@ -15,56 +16,31 @@ public class ItemBase extends Component {
 	private String[] defaultMaterials;		// The default materials that Item uses if no materials are passed to item.
 	
 	// Constructors.
-	public ItemBase(String filePath, Map<String, Object> values, ExpressionBuilder expBuilder) {
+	public ItemBase(String filePath, JSONObject values, ExpressionBuilder expBuilder) throws JSONException {
 		super(filePath, values, expBuilder);
 		
-		Object val;
 		// Get the prefix tag requirements.
-		val = values.get(PREFIXREQS_KEY);
-		if (val instanceof Object[]) {
-			String[] rawPrefixReqs = getStringsFromArray((Object[])val);
+		JSONArray rawPrefixReqs = values.getJSONArray(PREFIXREQS_KEY);
+		if (rawPrefixReqs.length() > 0) {
 			prefixReqs = new TagRequirement(rawPrefixReqs);
 		}
 		else {
 			prefixReqs = new TagRequirement();
 		}
+		
 		// Get the material tag requirements.
-		val = values.get(MATERIALREQS_KEY);
-		if (val instanceof Object[]) {
-			Object[] allMaterialReqs = (Object[])val;
-			materialReqs = new TagRequirement[allMaterialReqs.length];
-			for (int i = 0; i < allMaterialReqs.length; i++) {
-				if (allMaterialReqs[i] instanceof Object[]) {
-					String[] rawMatReqs = getStringsFromArray((Object[])allMaterialReqs[i]);
-					materialReqs[i] = new TagRequirement(rawMatReqs);
-				}
-			}
-		}
-		// Get the default materials.
-		val = values.get(DEFAULTMATERIALS_KEY);
-		if (val instanceof Object[])
-			defaultMaterials = getStringsFromArray((Object[])val);
-	}
-	
-	// A helper method for loading. TODO: Put this somewhere more appropriate.
-	protected String[] getStringsFromArray(Object[] array) {
-		// Count the number of strings.
-		int numStrings = 0;
-		for (int i = 0; i < array.length; i++) {
-			if (array[i] instanceof String) {
-				numStrings++;
-			}
+		JSONArray rawMaterialReqs = values.getJSONArray(MATERIALREQS_KEY);
+		materialReqs = new TagRequirement[rawMaterialReqs.length()];
+		for (int i = 0; i < materialReqs.length; i++) {
+			materialReqs[i] = new TagRequirement(rawMaterialReqs.getJSONArray(i));
 		}
 		
-		// Make an output array, fill it up, and return it.
-		String[] out = new String[numStrings];
-		for (int q = 0, i = 0; i < array.length; i++) {
-			if (array[i] instanceof String) {
-				out[q] = (String)array[i];
-				q++;
-			}
+		// Get the default materials.
+		JSONArray rawDefaultMaterials = values.getJSONArray(DEFAULTMATERIALS_KEY);
+		defaultMaterials = new String[rawDefaultMaterials.length()];
+		for (int i = 0; i < defaultMaterials.length; i++) {
+			defaultMaterials[i] = rawDefaultMaterials.getString(i);
 		}
-		return out;
 	}
 
 	// Accessors.

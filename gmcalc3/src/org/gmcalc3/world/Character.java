@@ -2,7 +2,9 @@
 
 package org.gmcalc3.world;
 
-import java.util.Map;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Character {
 
@@ -11,67 +13,58 @@ public class Character {
 	public static final String NAME_KEY = "name";
 	public static final String EQUIPPED_KEY = "equipped";
 	public static final String INVENTORY_KEY = "inventory";
+	public static final String QUANTITY_KEY = "Quantity";
+	public static final String PREFIXES_KEY = "Prefixes";
+	public static final String MATERIALS_KEY = "Materials";
+	public static final String ITEMBASE_KEY = "ItemBase";
 
 	// Instance fields.
+	private String filePath;
 	private World world;
-	private String id, name;
+	private String name;
 	private StatMap statMap;
 	private ListBag<Item> equipped, inventory;
 
 	// Constructors.
-	public Character(World world, String id) {
+	public Character(String filePath, World world) {
 		this.world = world;
-		this.id = id;
 		name = DEFAULT_NAME;
 		statMap = new StatMap();
 		equipped = new ListBag<Item>();
 		inventory = new ListBag<Item>();
 	}
 
-	public Character(World world, String id, Map<String, Object> values) {
-		this(world, id);
-
-		Object val;
+	public Character(String filePath, World world, JSONObject values) throws JSONException {
+		this(filePath, world);
+		
 		// Get the name.
-		val = values.get(NAME_KEY);
-		if (val instanceof String)
-			name = (String) val;
+		name = values.getString(NAME_KEY);
 
 		// Get the equipped items.
-		val = values.get(EQUIPPED_KEY);
-		if (val instanceof Object[]) {
-			Object[] rawItems = (Object[]) val;
-			for (int i = 0; i < rawItems.length; i++) {
-				if (rawItems[i] instanceof Object[]) {
-					makeItemFromData((Object[])rawItems[i], equipped);
-				}
-			}
+		JSONArray rawItems = values.getJSONArray(EQUIPPED_KEY);
+		for (int i = 0; i < rawItems.length(); i++) {
+			JSONObject data = rawItems.getJSONObject(i);
+			makeItemFromData(data, equipped);
 		}
 
-		//Log.getDefaultLog().info("Player (" + hashCode() + ") " + name + " in world " + world.getName() + " loaded " + equipped.size() + " equipped items.");
 		// Get the inventory items.
-		val = values.get(INVENTORY_KEY);
-		if (val instanceof Object[]) {
-			Object[] rawItems = (Object[]) val;
-			for (int i = 0; i < rawItems.length; i++) {
-				if (rawItems[i] instanceof Object[]) {
-					makeItemFromData((Object[])rawItems[i], inventory);
-				}
-			}
+		rawItems = values.getJSONArray(INVENTORY_KEY);
+		for (int i = 0; i < rawItems.length(); i++) {
+			JSONObject data = rawItems.getJSONObject(i);
+			makeItemFromData(data, inventory);
 		}
-		//Log.getDefaultLog().info("Player (" + hashCode() + ") " + name + " in world " + world.getName() + " loaded " + inventory.size() + " inventory items.");
 
 		// Recalculate the stats.
 		recalculateStats();
 	}
 
 	// Accessors.
-	public World getWorld() {
-		return world;
+	public String getFilePath() {
+		return filePath;
 	}
 	
-	public String getId() {
-		return id;
+	public World getWorld() {
+		return world;
 	}
 
 	public String getName() {
@@ -113,72 +106,48 @@ public class Character {
 	}
 
 	// Turn an array of objects into an item and add it to the given bag.
-	public void makeItemFromData(Object[] data, ListBag<Item> bag) {
-		// The data should have length 3. The first two elements are arrays and
-		// the third element is a string.
-		if (data.length != 4 || !(data[0] instanceof Integer)
-				|| !(data[1] instanceof Object[])
-				|| !(data[2] instanceof Object[])
-				|| !(data[3] instanceof String)) {
-			//Log.getDefaultLog().info("Invalid item declaration in player " + name);
+	public void makeItemFromData(JSONObject data, ListBag<Item> bag) throws JSONException {
+		// Get the quantity.
+		int quantity = data.getInt(QUANTITY_KEY);
+		if (quantity < 1)
 			return;
-		}
-
-		// A few casts.
-		int amount = (Integer) data[0];
-		if (amount < 1)
-			return;
-		Object[] rawPrefixes = (Object[]) data[1];
-		Object[] rawMaterials = (Object[]) data[2];
-		String rawItemBase = (String) data[3];
-
-		// Make the itemBase.
+		
+		// Get the item base.
+		String rawItemBase = data.getString(ITEMBASE_KEY);
 		ItemBase itemBase = world.getItemBase(rawItemBase);
-		if (itemBase == null) {
-			//Log.getDefaultLog().info("Could not find itemBase " + rawItemBase + " for player " + name);
+		// If we fail to find the item base, give up.
+		if (itemBase == null)
 			return;
-		}
-
-		// Make prefixes.
-		Component[] prefixes = new Component[rawPrefixes.length];
-		int numNull = 0;
+		
+		// Get the prefixes.
+		JSONArray rawPrefixes = data.getJSONArray(PREFIXES_KEY);
+		Component[] prefixes = new Component[rawPrefixes.length()];
 		for (int i = 0; i < prefixes.length; i++) {
-			if (rawPrefixes[i] instanceof String)
-				prefixes[i] = world.getPrefix((String) rawPrefixes[i]);
-			if (prefixes[i] == null)
-				numNull++;
+			String prefixPath = rawPrefixes.getString(i);
+			prefixes[i] = world.getPrefix(prefixPath);
+			// If we fail to find a prefix, give up.
+			if (prefixes[i] == null) 
+				return;
 		}
-		if (numNull > 0) {
-			Component[] oldPrefixes = prefixes;
-			prefixes = new Component[oldPrefixes.length - numNull];
-			for (int q = 0, i = 0; i < oldPrefixes.length; i++) {
-				if (oldPrefixes[i] != null)
-					prefixes[q++] = oldPrefixes[i];
-			}
-		}
-
-		// Make materials.
-		Component[] materials = new Component[rawMaterials.length];
-		numNull = 0;
+		
+		// Get the materials.
+		JSONArray rawMaterials = data.getJSONArray(MATERIALS_KEY);
+		Component[] materials = new Component[rawMaterials.length()];
 		for (int i = 0; i < materials.length; i++) {
-			if (rawMaterials[i] instanceof String)
-				materials[i] = world.getMaterial((String) rawMaterials[i]);
+			String materialPath = rawMaterials.getString(i);
+			materials[i] = world.getMaterial(materialPath);
+			// If we fail to find a material, give up.
 			if (materials[i] == null)
-				numNull++;
-		}
-		if (numNull > 0) {
-			Component[] oldMaterials = materials;
-			materials = new Component[oldMaterials.length - numNull];
-			for (int q = 0, i = 0; i < oldMaterials.length; i++) {
-				if (oldMaterials[i] != null)
-					materials[q++] = oldMaterials[i];
-			}
+				return;
 		}
 
-		// Add the item to the bag.
+		// Make the item.
 		Item item = world.makeItem(prefixes, materials, itemBase);
+		// If the item couldn't be made, give up.
 		if (item == null)
 			return;
-		bag.add(item, amount);
+		
+		// Add the item to the bag.
+		bag.add(item, quantity);
 	}
 }

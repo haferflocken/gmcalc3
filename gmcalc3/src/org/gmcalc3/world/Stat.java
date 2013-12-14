@@ -2,13 +2,17 @@ package org.gmcalc3.world;
 
 import java.util.Arrays;
 
-import org.hafermath.expression.ConstantExpression;
 import org.hafermath.expression.Expression;
 import org.hafermath.expression.ExpressionBuilder;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Stat {
 	
-	public static final String EXPRESSION_IDENTIFIER = "#exp"; // If a string starts with this, it is an expression.
+	public static final String STRINGS_KEY = "strings";
+	public static final String RANGE_KEY = "range";
+	public static final String EXPRESSION_KEY = "expression";
 
 	//The different parts of a stat.
 	private String[] strings;
@@ -26,50 +30,32 @@ public class Stat {
 		this(null, null, null);
 	}
 	
-	public Stat(Object[] values, ExpressionBuilder expBuilder) {
+	public Stat(String rawExpression, ExpressionBuilder expBuilder) {
+		this(null, null, expBuilder.makeExpression(rawExpression));
+	}
+	
+	public Stat(JSONObject values, ExpressionBuilder expBuilder) throws JSONException {
 		this();
 		
-		// Count the number of strings in the array.
-		int numStrings = 0;
-		for (int i = 0; i < values.length; i++) {
-			if (values[i] instanceof String) {
-				String string = (String)values[i];
-				if (!string.startsWith(EXPRESSION_IDENTIFIER))
-					numStrings++;
+		// Get the strings.
+		JSONArray rawStrings = values.optJSONArray(STRINGS_KEY);
+		if (rawStrings != null) {
+			strings = new String[rawStrings.length()];
+			for (int i = 0; i < strings.length; i++) {
+				strings[i] = rawStrings.getString(i);
 			}
 		}
 		
-		// Look through the array and assign the values appropriately.
-		if (numStrings > 0)
-			strings = new String[numStrings];
-		for (int q = 0, i = 0; i < values.length; i++) {
-			// Strings can be either an expression or just a string.
-			if (values[i] instanceof String) {
-				String string = (String)values[i];
-				// If it's an expression, make an expression.
-				if (string.startsWith(EXPRESSION_IDENTIFIER))
-					expression = expBuilder.makeExpression(string.substring(EXPRESSION_IDENTIFIER.length()));
-				// Otherwise, treat it like a string.
-				else
-					strings[q] = (String)values[i];
-				q++;
-			}
-			// Arrays are possibly ranges.
-			else if (values[i] instanceof Object[]) {
-				Object[] rawRange = (Object[])values[i];
-				// To be a range, the array must be length 2 and have 2 integers in it.
-				if (rawRange.length == 2 && rawRange[0] instanceof Integer && rawRange[1] instanceof Integer) {
-					range = new Range((Integer)rawRange[0], (Integer)rawRange[1]);
-				}
-			}
-			// If there is an integer, just make an expression from it.
-			else if (values[i] instanceof Integer) {
-				expression = new ConstantExpression((Integer)values[i]);
-			}
-			// If there is a float, just make an expression from it.
-			else if (values[i] instanceof Float) {
-				expression = new ConstantExpression((Float)values[i]);
-			}
+		// Get the range.
+		JSONArray rawRange = values.optJSONArray(RANGE_KEY);
+		if (rawRange != null) {
+			range = new Range(rawRange.getInt(0), rawRange.getInt(1));
+		}
+		
+		// Get the expression.
+		String rawExpression = values.optString(EXPRESSION_KEY);
+		if (rawExpression != null) {
+			expression = expBuilder.makeExpression(rawExpression);
 		}
 	}
 	

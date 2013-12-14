@@ -12,80 +12,68 @@ import android.support.v4.view.ViewPager;
 import android.widget.ExpandableListAdapter;
 import android.widget.SimpleExpandableListAdapter;
 
-import org.gmcalc3.world.Character;
+import org.gmcalc3.world.World;
 
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 
-public class CharacterDetailActivity extends Activity {
+public class WorldDetailActivity extends Activity {
 	
-	private ExpandableListFragment statsFragment;
-	private ExpandableListFragment equippedFragment;
-	private ExpandableListFragment inventoryFragment;
+	private Fragment rulesFragment;
+	private ExpandableListFragment characterFragment;
+	private ExpandableListFragment prefixFragment;
+	private ExpandableListFragment materialFragment;
+	private ExpandableListFragment itemBaseFragment;
 	private ViewPager tabPager;
-	private Character character;
+	private World world;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_character_detail);
+		setContentView(R.layout.activity_world_detail);
+		setupLayout();
 		
-		// TODO: Get the character from the bundle.
-		
-		// Calc the current screen width in dp.
-		int width = (int)(getResources().getDisplayMetrics().widthPixels / getResources().getDisplayMetrics().density);
-		
-		// Set up the fragments appropriately.
-		if (width < 720)
-			setupTabbedLayout();
-		else
-			setupColumnedLayout();
+		// TODO: Get the world from the bundle.
 		
 		// Populate the fragments.
-		android.util.Log.i("gmcalc3", "populating");
-		populateStatsFragment();
-		populateEquippedFragment();
-		populateInventoryFragment();
+		populateRulesFragment();
+		populateCharacterFragment();
+		populatePrefixFragment();
+		populateMaterialFragment();
+		populateItemBaseFragment();
 	}
 	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
-		// TODO: Save the character to the bundle.
+		// TODO: Save the world to the bundle.
 	}
 	
-	// Set up the tabbed layout when it's being used.
-	private void setupTabbedLayout() {
+	// Set up the layout.
+	private void setupLayout() {
 		// Create the fragments.
-		statsFragment = new ExpandableListFragment();
-		equippedFragment = new ExpandableListFragment();
-		inventoryFragment = new ExpandableListFragment();
+		rulesFragment = new ExpandableListFragment();
+		characterFragment = new ExpandableListFragment();
+		prefixFragment = new ExpandableListFragment();
+		materialFragment = new ExpandableListFragment();
+		itemBaseFragment = new ExpandableListFragment();
 						
 		// Set up the tab pager.
 		tabPager = (ViewPager)findViewById(R.id.tabPager);
 		String[] tabTitles = new String[] {
-				getResources().getString(R.string.character_detail_stats),
-				getResources().getString(R.string.character_detail_equipped),
-				getResources().getString(R.string.character_detail_inventory),
+				getResources().getString(R.string.world_detail_rules),
+				getResources().getString(R.string.world_detail_characters),
+				getResources().getString(R.string.world_detail_prefixes),
+				getResources().getString(R.string.world_detail_materials),
+				getResources().getString(R.string.world_detail_itembases),
 			};
-		Fragment[] tabFragments = new Fragment[] { statsFragment, equippedFragment, inventoryFragment };
+		Fragment[] tabFragments = new Fragment[] { rulesFragment, characterFragment, prefixFragment, materialFragment, itemBaseFragment };
 		TabAdapter tabAdapter = new TabAdapter(getFragmentManager(), tabTitles, tabFragments);
 		tabPager.setAdapter(tabAdapter);
 						
 		// Bind the tab strip to the pager.
 		PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip)findViewById(R.id.tabStrip);
 		tabStrip.setViewPager(tabPager);
-	}
-	
-	// Set up the column layout when it's being used.
-	private void setupColumnedLayout() {
-		// Get rid of references to things we don't like.
-		tabPager = null;
-		
-		// Get the fragments as they were defined in XML.
-		statsFragment = (ExpandableListFragment)getFragmentManager().findFragmentById(R.id.statsFragment);
-		equippedFragment = (ExpandableListFragment)getFragmentManager().findFragmentById(R.id.equippedFragment);
-		inventoryFragment = (ExpandableListFragment)getFragmentManager().findFragmentById(R.id.inventoryFragment);
 	}
 	
 	private List<Map<String, ?>> createMaps(String[] strings) {
@@ -123,33 +111,43 @@ public class CharacterDetailActivity extends Activity {
 				childData, childLayout, childFrom, childTo);
 	}
 	
-	// Populate the stats fragment using the character.
-	protected void populateStatsFragment() {
-		// Populate the fragment with bullshit.
-		statsFragment.setExpandableListAdapter(createExpandableListAdapter(
-				createMaps(new String[] { "Mumbo", "Jumbo", "Wumbo", "Stats are cool" }),
-				createChildMaps(new String[][] {
-						{ "Cumbo", "Fook" }, { "Bumbo" }, { "Sumbo" }, { "I disagree." },
-				})));
+	// Populate the rules fragment using the world.
+	private void populateRulesFragment() {
 	}
 
-	// Populate the equipped fragment using the character.
-	protected void populateEquippedFragment() {
-		// Populate the fragment with bullshit.
-		equippedFragment.setExpandableListAdapter(createExpandableListAdapter(
+	// Populate the character fragment using the world.
+	private void populateCharacterFragment() {
+		characterFragment.setExpandableListAdapter(createExpandableListAdapter(
 				createMaps(new String[] { "King Dick Alpha Cleaver", "Adamantite Chainsword", "Wizard Robes" }),
 				createChildMaps(new String[][] {
 						{ "Damn this thing is fine" }, { "WHOOAAAA" }, { "YEAH BWOY MAGICKS" },
 				})));
 	}
 	
-	// Populate the inventory fragment using the character.
-	protected void populateInventoryFragment() {
-		// Populate the fragment with bullshit.
-		inventoryFragment.setExpandableListAdapter(createExpandableListAdapter(
+	// Populate the prefix fragment using the world.
+	private void populatePrefixFragment() {
+		prefixFragment.setExpandableListAdapter(createExpandableListAdapter(
 				createMaps(new String[] { "Gold x100" }),
 				createChildMaps(new String[][] {
 						{ "Swag in solid form." },
+				})));
+	}
+	
+	// Populate the material fragment using the world.
+	private void populateMaterialFragment() {
+		prefixFragment.setExpandableListAdapter(createExpandableListAdapter(
+				createMaps(new String[] { "Gold x100" }),
+				createChildMaps(new String[][] {
+						{ "Swag in solid form." },
+				})));
+	}
+	
+	// Populate the item base fragment using the world.
+	private void populateItemBaseFragment() {
+		itemBaseFragment.setExpandableListAdapter(createExpandableListAdapter(
+				createMaps(new String[] { "Gold x100" }),
+				createChildMaps(new String[][] {
+					{ "Swag in solid form." },
 				})));
 	}
 }

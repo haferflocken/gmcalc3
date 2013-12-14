@@ -5,11 +5,21 @@ package org.gmcalc3.world;
 import java.util.Arrays;
 import java.util.Set;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 public class TagRequirement {
 	
 	private String[] requiredTags;
 	
-	// Constructor.
+	// Constructors.
+	public TagRequirement(JSONArray rawTags) throws JSONException {
+		requiredTags = new String[rawTags.length()];
+		for (int i = 0; i < requiredTags.length; i++) {
+			requiredTags[i] = rawTags.getString(i);
+		}
+	}
+	
 	public TagRequirement(String[] requiredTags) {
 		this.requiredTags = requiredTags;
 	}

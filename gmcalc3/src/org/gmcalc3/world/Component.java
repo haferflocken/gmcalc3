@@ -2,11 +2,13 @@
 
 package org.gmcalc3.world;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.hafermath.expression.ExpressionBuilder;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Component {
 	
@@ -34,30 +36,23 @@ public class Component {
 		this(filePath, "Untitled Item", new StatMap(), 0, new TreeSet<String>());
 	}
 	
-	public Component(String filePath, Map<String, Object> values, ExpressionBuilder expBuilder) {
+	public Component(String filePath, JSONObject values, ExpressionBuilder expBuilder) throws JSONException {
 		this(filePath);
-		Object val;
+		
 		// Get the name.
-		val = values.get(NAME_KEY);
-		if (val instanceof String)
-			name = (String)val;
+		name = values.getString(NAME_KEY);
+		
 		// Get the stats.
-		val = values.get(STATMAP_KEY);
-		if (val instanceof Map<?, ?>) 
-			statMap = new StatMap((Map<?, ?>)val, expBuilder);
+		JSONObject rawStatMap = values.getJSONObject(STATMAP_KEY); 
+		statMap = new StatMap(rawStatMap, expBuilder);
+		
 		// Get the rarity.
-		val = values.get(RARITY_KEY);
-		if (val instanceof Integer)
-			rarity = (Integer)val;
+		rarity = values.getInt(RARITY_KEY);
+		
 		// Get the tags.
-		val = values.get(TAGS_KEY);
-		if (val instanceof Object[]) {
-			Object[] rawTags = (Object[])val;
-			for (int i = 0; i < rawTags.length; i++) {
-				if (rawTags[i] instanceof String) {
-					tags.add((String)rawTags[i]);
-				}
-			}
+		JSONArray rawTags = values.getJSONArray(TAGS_KEY);
+		for (int i = 0; i < rawTags.length(); i++) {
+			tags.add(rawTags.getString(i));
 		}
 	}
 	

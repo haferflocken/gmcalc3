@@ -13,6 +13,9 @@ import java.util.Map;
 import java.util.Arrays;
 
 import org.hafermath.expression.ExpressionBuilder;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.graphics.Color;
 
@@ -71,8 +74,8 @@ public class World {
 	private Map<String, Character> characters;							// The characters.
 	
 	// Constructor.
-	public World(Map<String, Object> ruleValues, ExpressionBuilder expBuilder, Map<String, Component> prefixes,
-			Map<String, Component> materials, Map<String, ItemBase> itemBases) {
+	public World(JSONObject ruleValues, ExpressionBuilder expBuilder, Map<String, Component> prefixes,
+			Map<String, Component> materials, Map<String, ItemBase> itemBases) throws JSONException {
 		setRulesToDefault();
 		setRules(ruleValues, expBuilder);
 		this.prefixes = prefixes;
@@ -90,67 +93,48 @@ public class World {
 	}
 	
 	// Set the rules using loaded data.
-	public void setRules(Map<String, Object> rawRules, ExpressionBuilder expBuilder) {
-		Object val;
+	public void setRules(JSONObject rawRules, ExpressionBuilder expBuilder) throws JSONException {
 		// Get the name.
-		val = rawRules.get(NAME_KEY);
-		if (val instanceof String)
-			name = (String)val;
+		name = rawRules.getString(NAME_KEY);
 		
 		// Get the rarity colors.
-		val = rawRules.get(RARITYCOLORS_KEY);
-		if (val instanceof Map<?, ?>) {
-			//Get the map and make an ArrayList to put the parsed colors into.
-			Map<?, ?> rarityMap = (Map<?, ?>)val;
-			ArrayList<RarityColor> rarityColorList = new ArrayList<RarityColor>();
+		JSONObject rawRarityColors = rawRules.getJSONObject(RARITYCOLORS_KEY);
+		ArrayList<RarityColor> rarityColorList = new ArrayList<RarityColor>(); // Make ArrayList to put the parsed colors into.
+		
+		JSONArray rarityColorNames = rawRarityColors.names();
+		for (int i = 0; i < rarityColorNames.length(); i++) {
+			String rarityColorName = rarityColorNames.getString(i);
+			int rarityVal = Integer.parseInt(rarityColorName);
+			JSONArray rawColor = rawRarityColors.getJSONArray(rarityColorName);
+			int red = rawColor.getInt(0);
+			int green = rawColor.getInt(1);
+			int blue = rawColor.getInt(2);
+			int rarityColor = Color.rgb(red, green, blue);
+			rarityColorList.add(new RarityColor(rarityColor, rarityVal));
+		}
 			
-			// Look through the map, parsing out rarity colors.
-			for (Map.Entry<?, ?> entry : rarityMap.entrySet()) {
-				if (entry.getKey() instanceof Integer && entry.getValue() instanceof Object[]) {
-					Integer rarityVal = (Integer)entry.getKey();
-					Object[] rawColor = (Object[])entry.getValue();
-					if (rawColor.length == 3 && rawColor[0] instanceof Integer && rawColor[1] instanceof Integer && rawColor[2] instanceof Integer) {
-						int red = (Integer)rawColor[0];
-						int green = (Integer)rawColor[1];
-						int blue = (Integer)rawColor[2];
-						int rarityColor = Color.rgb(red, green, blue);
-						rarityColorList.add(new RarityColor(rarityColor, rarityVal));
-					}
-				}
-			}
-			
-			// If we successfully parsed any, set rarityColors to the contents of rarityColorList and then sort.
-			if (rarityColorList.size() > 0) {
-				rarityColors = rarityColorList.toArray(new RarityColor[rarityColorList.size()]);
-				Arrays.sort(rarityColors);
-			}
+		// If we successfully parsed any, set rarityColors to the contents of rarityColorList and then sort.
+		if (rarityColorList.size() > 0) {
+			rarityColors = rarityColorList.toArray(new RarityColor[rarityColorList.size()]);
+			Arrays.sort(rarityColors);
 		}
 		
-		// Get the player stat categories.
-		val = rawRules.get(PLAYERSTATCATEGORIES_KEY);
-		if (val instanceof Map<?, ?>) {
-			Map<?, ?> catMap = (Map<?, ?>)val;
-			ArrayList<String> catValBuilder = new ArrayList<String>();
-			for (Map.Entry<?, ?> entry : catMap.entrySet()) {
-				if (entry.getKey() instanceof String && entry.getValue() instanceof Object[]) {
-					String catKey = (String)entry.getKey();
-					Object[] rawCatVal = (Object[])entry.getValue();
-					for (Object o : rawCatVal) {
-						if (o instanceof String)
-							catValBuilder.add((String)o);
-					}
-					String[] catVal = catValBuilder.toArray(new String[catValBuilder.size()]);
-					catValBuilder.clear();
-					characterStatCategories.put(catKey, catVal);
-				}
+		// Get the character stat categories.
+		JSONObject rawStatCategories = rawRules.getJSONObject(PLAYERSTATCATEGORIES_KEY);
+		JSONArray rawStatCategoryNames = rawStatCategories.names();
+		for (int i = 0; i < rawStatCategoryNames.length(); i++) {
+			String statCategoryName = rawStatCategoryNames.getString(i);
+			JSONArray rawContents = rawStatCategories.getJSONArray(statCategoryName);
+			String[] statCategoryContents = new String[rawContents.length()];
+			for (int j = 0; j < statCategoryContents.length; j++) {
+				statCategoryContents[j] = rawContents.getString(j);
 			}
+			characterStatCategories.put(statCategoryName, statCategoryContents);
 		}
 		
 		// Get the player base stats.
-		val = rawRules.get(PLAYERBASESTATS_KEY);
-		if (val instanceof Map<?, ?>) {
-			characterBaseStats = new StatMap((Map<?, ?>)val, expBuilder);
-		}
+		JSONObject rawBaseStats = rawRules.getJSONObject(PLAYERBASESTATS_KEY);
+		characterBaseStats = new StatMap(rawBaseStats, expBuilder);
 	}
 	
 	// Get the name.

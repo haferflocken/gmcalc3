@@ -12,6 +12,9 @@ import org.hafermath.expression.ConstantExpression;
 import org.hafermath.expression.Expression;
 import org.hafermath.expression.ExpressionBuilder;
 import org.hafermath.expression.VariableExpression;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class StatMap {
 	
@@ -51,17 +54,24 @@ public class StatMap {
 		stats = new TreeMap<String, Stat>();
 	}
 	
-	public StatMap(Map<?, ?> rawStats, ExpressionBuilder expBuilder) {
+	public StatMap(JSONObject rawStats, ExpressionBuilder expBuilder) throws JSONException {
 		this();
-		// Look at the pairs in the map. Those that have a string key and a valid stat value are put into the map of stats.
-		for (Map.Entry<?, ?> entry : rawStats.entrySet()) {
-			if (entry.getKey() instanceof String && entry.getValue() instanceof Object[]) {
-				// Get the key and value for easy reference.
-				String key = (String)entry.getKey();
-				Object[] val = (Object[])entry.getValue();
-				
-				// Put the stat in the map of stats.
-				stats.put(key, new Stat(val, expBuilder));
+		JSONArray keys = rawStats.names();
+		if (keys != null) {
+			for (int i = 0; i < keys.length(); i++) {
+				Stat stat;
+				String key = keys.getString(i);
+				// A stat can be a string or a JSONObject.
+				// A stat that is just a string is just shorthand for a stat with only an expression.
+				String statString = rawStats.optString(key);
+				if (statString != null) {
+					stat = new Stat(statString, expBuilder);
+				}
+				else {
+					JSONObject statObj = rawStats.getJSONObject(key);
+					stat = new Stat(statObj, expBuilder);
+				}
+				stats.put(key, stat);
 			}
 		}
 	}
