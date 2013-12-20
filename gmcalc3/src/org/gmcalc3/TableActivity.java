@@ -1,6 +1,6 @@
 package org.gmcalc3;
 
-import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
+import com.astuetz.PagerSlidingTabStrip;
 
 import android.app.Fragment;
 import android.app.ListFragment;

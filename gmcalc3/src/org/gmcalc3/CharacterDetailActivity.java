@@ -14,7 +14,7 @@ import android.widget.SimpleExpandableListAdapter;
 
 import org.gmcalc3.world.Character;
 
-import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
+import com.astuetz.PagerSlidingTabStrip;
 
 public class CharacterDetailActivity extends Activity {
 	
