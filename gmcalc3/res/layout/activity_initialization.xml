@@ -1,0 +1,25 @@
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/com/astuetz"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" >
+	
+    <TextView
+        android:id="@+id/loadDescription"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/loadProgress"
+        android:layout_above="@+id/loadProgress"
+        android:text="Loading..." />
+    
+	<ProgressBar
+	    android:id="@+id/loadProgress"
+	    android:layout_width="fill_parent"
+	    android:layout_height="4dp"
+	    android:layout_alignParentLeft="true"
+	    android:layout_centerVertical="true"
+	    android:layout_marginLeft="16dp"
+	    android:layout_marginRight="16dp"
+		style="@android:style/Widget.ProgressBar.Horizontal" />
+	
+</RelativeLayout>

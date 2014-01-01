@@ -254,7 +254,7 @@ public class World {
 	}
 
 	// Set the character map.
-	public void setPlayerMap(Map<String, Character> c) {
+	public void setCharacterMap(Map<String, Character> c) {
 		characters = c;
 	}
 	

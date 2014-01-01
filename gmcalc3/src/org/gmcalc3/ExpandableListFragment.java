@@ -30,6 +30,7 @@ public class ExpandableListFragment extends Fragment {
 	public ExpandableListFragment() {
 	}
 
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.expandable_list_view_layout, container, false);

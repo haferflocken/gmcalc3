@@ -1,22 +1,64 @@
 package org.gmcalc3;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ClipData;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.widget.ExpandableListAdapter;
-import android.widget.SimpleExpandableListAdapter;
+import android.view.DragEvent;
+import android.view.View;
+import android.view.View.DragShadowBuilder;
+import android.view.View.OnDragListener;
+import android.view.View.OnLongClickListener;
+import android.view.ViewGroup;
+import android.widget.ExpandableListView;
 
+import org.gmcalc3.widget.CharacterStatAdapter;
+import org.gmcalc3.widget.ItemBagAdapter;
 import org.gmcalc3.world.Character;
 
 import com.astuetz.PagerSlidingTabStrip;
 
 public class CharacterDetailActivity extends Activity {
+	
+	// Detects touch on item views.
+	public static final class ItemLongClickListener implements OnLongClickListener {
+
+		@Override
+		public boolean onLongClick(View v) {
+			ClipData data = ClipData.newPlainText("", "");
+			DragShadowBuilder shadowBuilder = new DragShadowBuilder(v);
+			v.startDrag(data, shadowBuilder, v, 0);
+			return false;
+		}
+	}
+	
+	// Allows an ExpandableListView to receive item views.
+	public static final class ItemDragListener implements OnDragListener {
+		
+		@Override
+		public boolean onDrag(View v, DragEvent event) {
+			switch(event.getAction()) {
+			case DragEvent.ACTION_DRAG_STARTED:
+				break;
+			case DragEvent.ACTION_DRAG_ENTERED:
+				break;
+			case DragEvent.ACTION_DRAG_EXITED:
+				break;
+			case DragEvent.ACTION_DROP:
+				View droppedView = (View)event.getLocalState();
+				ViewGroup fromGroup = (ViewGroup)droppedView.getParent();
+				fromGroup.removeView(droppedView);
+				ExpandableListView toGroup = (ExpandableListView)v;
+				toGroup.addView(droppedView);
+				droppedView.setVisibility(View.VISIBLE);
+				break;
+			case DragEvent.ACTION_DRAG_ENDED:
+				break;
+			}
+			return true;
+		}
+	}
 	
 	private ExpandableListFragment statsFragment;
 	private ExpandableListFragment equippedFragment;
@@ -30,6 +72,7 @@ public class CharacterDetailActivity extends Activity {
 		setContentView(R.layout.activity_character_detail);
 		
 		// TODO: Get the character from the bundle.
+		character = new Character("Test Character", null);
 		
 		// Calc the current screen width in dp.
 		int width = (int)(getResources().getDisplayMetrics().widthPixels / getResources().getDisplayMetrics().density);
@@ -48,6 +91,15 @@ public class CharacterDetailActivity extends Activity {
 	}
 	
 	@Override
+	protected void onStart() {
+		super.onStart();
+		
+		// Set up drag and drop.
+		//setupDragAndDrop((ViewGroup)equippedFragment.getView());
+		//setupDragAndDrop((ViewGroup)inventoryFragment.getView());
+	}
+	
+	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
@@ -60,7 +112,7 @@ public class CharacterDetailActivity extends Activity {
 		statsFragment = new ExpandableListFragment();
 		equippedFragment = new ExpandableListFragment();
 		inventoryFragment = new ExpandableListFragment();
-						
+		
 		// Set up the tab pager.
 		tabPager = (ViewPager)findViewById(R.id.tabPager);
 		String[] tabTitles = new String[] {
@@ -88,7 +140,7 @@ public class CharacterDetailActivity extends Activity {
 		inventoryFragment = (ExpandableListFragment)getFragmentManager().findFragmentById(R.id.inventoryFragment);
 	}
 	
-	private List<Map<String, ?>> createMaps(String[] strings) {
+	/*private List<Map<String, ?>> createMaps(String[] strings) {
 		List<Map<String, ?>> out = new ArrayList<Map<String, ?>>();
 		for (String s : strings) {
 			Map<String, String> row = new HashMap<String, String>();
@@ -108,10 +160,6 @@ public class CharacterDetailActivity extends Activity {
 	
 	private ExpandableListAdapter createExpandableListAdapter(List<? extends Map<String, ?>> groupData,
 			List<? extends List<? extends Map<String, ?>>> childData) {
-		/* SimpleExpandableListAdapter(Context context, 
-			List<? extends Map<String, ?>> groupData, int groupLayout, String[] groupFrom, int[] groupTo,
-			List<? extends Map<String, ?>> childData, int childLayout, String[] childFrom, int[] childTo)
-		*/
 		int groupLayout = android.R.layout.simple_expandable_list_item_1;
 		String[] groupFrom = new String[] { "text1" };
 		int[] groupTo = new int[] { android.R.id.text1 };
@@ -121,35 +169,42 @@ public class CharacterDetailActivity extends Activity {
 		return new SimpleExpandableListAdapter(this,
 				groupData, groupLayout, groupFrom, groupTo,
 				childData, childLayout, childFrom, childTo);
-	}
+	}*/
 	
 	// Populate the stats fragment using the character.
 	protected void populateStatsFragment() {
-		// Populate the fragment with bullshit.
-		statsFragment.setExpandableListAdapter(createExpandableListAdapter(
-				createMaps(new String[] { "Mumbo", "Jumbo", "Wumbo", "Stats are cool" }),
-				createChildMaps(new String[][] {
-						{ "Cumbo", "Fook" }, { "Bumbo" }, { "Sumbo" }, { "I disagree." },
-				})));
+		//statsFragment.setExpandableListAdapter(new CharacterStatAdapter(this, character));
 	}
 
 	// Populate the equipped fragment using the character.
 	protected void populateEquippedFragment() {
 		// Populate the fragment with bullshit.
-		equippedFragment.setExpandableListAdapter(createExpandableListAdapter(
+		/*equippedFragment.setExpandableListAdapter(createExpandableListAdapter(
 				createMaps(new String[] { "King Dick Alpha Cleaver", "Adamantite Chainsword", "Wizard Robes" }),
 				createChildMaps(new String[][] {
 						{ "Damn this thing is fine" }, { "WHOOAAAA" }, { "YEAH BWOY MAGICKS" },
-				})));
+				})));*/
+		equippedFragment.setExpandableListAdapter(new ItemBagAdapter(this, character.getEquipped()));
 	}
 	
 	// Populate the inventory fragment using the character.
 	protected void populateInventoryFragment() {
 		// Populate the fragment with bullshit.
-		inventoryFragment.setExpandableListAdapter(createExpandableListAdapter(
+		/*inventoryFragment.setExpandableListAdapter(createExpandableListAdapter(
 				createMaps(new String[] { "Gold x100" }),
 				createChildMaps(new String[][] {
 						{ "Swag in solid form." },
-				})));
+				})));*/
+		inventoryFragment.setExpandableListAdapter(new ItemBagAdapter(this, character.getInventory()));
+	}
+	
+	// Set up the drag and drop between the equipped and inventory columns.
+	private void setupDragAndDrop(ViewGroup group) {
+		group.setOnDragListener(new ItemDragListener());
+		for (int i = 0; i < group.getChildCount(); i++) {
+			View v = group.getChildAt(i);
+			v.setLongClickable(true);
+			v.setOnLongClickListener(new ItemLongClickListener());
+		}
 	}
 }

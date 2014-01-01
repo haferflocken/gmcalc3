@@ -47,7 +47,7 @@ public class StatMap {
 		
 	}
 	
-	private TreeMap<String, Stat> stats; //The stats and their names.
+	private TreeMap<String, Stat> stats; // The stats and their names.
 	
 	// Constructors.
 	public StatMap() {
@@ -81,12 +81,12 @@ public class StatMap {
 		stats.clear();
 	}
 	
-	//Put a stat in this, overriding the old value if there is one.
+	// Put a stat in this, overriding the old value if there is one.
 	public void put(String key, Stat value) {
 		stats.put(key, value);
 	}
 	
-	//Put a stat in this, adding the value to the old value if there is one.
+	// Put a stat in this, adding the value to the old value if there is one.
 	public void addPut(String key, Stat value) {
 		Stat oldValue = stats.get(key);
 		if (oldValue == null) {
@@ -97,7 +97,7 @@ public class StatMap {
 		}
 	}
 	
-	//Add the like values of a StatMap to this one.
+	// Add the like values of a StatMap to this one.
 	public void addMap(StatMap other) {
 		for (Map.Entry<String, Stat> entry : stats.entrySet()) {
 			Stat otherValue = other.stats.get(entry.getKey());
@@ -162,4 +162,8 @@ public class StatMap {
 		}
 	}
 	
+	public int size() {
+		return stats.size();
+	}
+
 }

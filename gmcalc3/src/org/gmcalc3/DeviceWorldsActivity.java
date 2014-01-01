@@ -1,10 +1,16 @@
 package org.gmcalc3;
 
+import java.util.Map;
+
+import org.gmcalc3.world.World;
+
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class DeviceWorldsActivity extends NavDrawerActivity {
+	
+	public static Map<String, World> deviceWorlds;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
