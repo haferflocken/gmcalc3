@@ -6,9 +6,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
-public class Character {
+public class Character implements Parcelable {
 
 	// Keys for loading.
 	public static final String DEFAULT_NAME = "Unnamed";
@@ -29,6 +31,7 @@ public class Character {
 
 	// Constructors.
 	public Character(String filePath, World world) {
+		this.filePath = filePath;
 		this.world = world;
 		name = DEFAULT_NAME;
 		statMap = new StatMap();
@@ -153,4 +156,28 @@ public class Character {
 		Item item = new Item(world, prefixes, materials, itemBase);
 		bag.add(item, quantity);
 	}
+
+	@Override
+    public int describeContents() {
+        return 0;
+    }
+
+	@Override
+    public void writeToParcel(Parcel out, int flags) {
+		out.writeParcelable(world, flags);
+		out.writeString(filePath);
+    }
+
+    public static final Parcelable.Creator<Character> CREATOR
+            = new Parcelable.Creator<Character>() {
+        public Character createFromParcel(Parcel in) {
+            World world = in.readParcelable(World.class.getClassLoader());
+            String filePath = in.readString();
+            return world.getCharacter(filePath);
+        }
+
+        public Character[] newArray(int size) {
+            return new Character[size];
+        }
+    };
 }

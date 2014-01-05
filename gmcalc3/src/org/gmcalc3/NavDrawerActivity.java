@@ -55,8 +55,9 @@ public abstract class NavDrawerActivity extends Activity {
 		// Grab click events from the nav drawer.
 		drawerList.setOnItemClickListener(new ListView.OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView parent, View view, int position, long id) {
-				// Navigate to another top-level view. TODO Consider using custom item layout and getting string from item view.
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				// Navigate to another top-level view.
+				// TODO Consider using custom item layout and getting string from item view.
 				String key = drawerStrings[position];
 				Intent destination = drawerItemMap.get(key);
 				if (destination != null) {
@@ -89,10 +90,6 @@ public abstract class NavDrawerActivity extends Activity {
 		key = getResources().getString(R.string.label_settings);
 		value = new Intent("org.gmcalc3.SettingsActivity");
 		value.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		drawerItemMap.put(key, value);
-		
-		key = getResources().getString(R.string.label_character_detail);
-		value = new Intent("org.gmcalc3.CharacterDetailActivity");
 		drawerItemMap.put(key, value);
 		
 		updatedDrawerItemMap();

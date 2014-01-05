@@ -66,6 +66,16 @@
 		</activity>
 		
 		<activity
+			android:name="org.gmcalc3.WorldDetailActivity"
+			android:label="@string/label_world_detail"  >
+			
+			<intent-filter>
+				<action android:name="org.gmcalc3.WorldDetailActivity" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		
+		<activity
 			android:name="org.gmcalc3.CharacterDetailActivity"
 			android:label="@string/label_character_detail"  >
 			

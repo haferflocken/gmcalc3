@@ -3,6 +3,7 @@ package org.gmcalc3;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ClipData;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -17,11 +18,12 @@ import android.widget.ExpandableListView;
 import org.gmcalc3.widget.CharacterStatAdapter;
 import org.gmcalc3.widget.ItemBagAdapter;
 import org.gmcalc3.world.Character;
-import org.gmcalc3.world.World;
 
 import com.astuetz.PagerSlidingTabStrip;
 
 public class CharacterDetailActivity extends Activity {
+	
+	public static final String BUNDLE_CHARACTER = "character";
 	
 	// Detects touch on item views.
 	public static final class ItemLongClickListener implements OnLongClickListener {
@@ -73,11 +75,24 @@ public class CharacterDetailActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_character_detail);
 		
-		// TODO: Get the character from the bundle.
-		//character = new Character("Test Character", null);
-		character = DeviceWorldsActivity.deviceWorlds.get("forgottenrealms").getCharacter("playerTest.json");
+		// Enable the up button.
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		
+		// Get the character from the bundle.
+		if (savedInstanceState != null)
+			character = savedInstanceState.getParcelable(BUNDLE_CHARACTER);
+		else
+			character = getIntent().getParcelableExtra(BUNDLE_CHARACTER);
+		
+		// Abort if there's no character to display.
+		if (character == null) {
+			Log.e("gmcalc3", "No character for CharacterDetailActivity to show.");
+			finish();
+			return;
+		}
 		
 		// Set the activity title to the character's name.
+		character.recalculateStats();
 		setTitle(character.getName());
 		
 		// Calc the current screen width in dp.
@@ -109,8 +124,16 @@ public class CharacterDetailActivity extends Activity {
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
-		// TODO: Save the character to the bundle.
-		// Format: (deviceWorlds | tableWorlds), worldKey, characterKey
+		// Save the character to the bundle.
+		outState.putParcelable(BUNDLE_CHARACTER, character);
+	}
+	
+	@Override
+	public Intent getParentActivityIntent() {
+		// Make up navigation work properly.
+		Intent out = new Intent(this, WorldDetailActivity.class);
+		out.putExtra(WorldDetailActivity.BUNDLE_WORLD, character.getWorld());
+		return out;
 	}
 	
 	// Set up the tabbed layout when it's being used.

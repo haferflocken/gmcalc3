@@ -16,7 +16,7 @@ public class ItemBase extends Component {
 	
 	private String[] prefixReqs;		// The tag requirements for all prefixes.
 	private String[][] materialReqs;	// The tag requirements for each material.
-	private String[] defaultMaterials;		// The default materials that Item uses if no materials are passed to item.
+	private String[] defaultMaterials;	// The default materials that Item uses if no materials are passed to item.
 	
 	// Constructors.
 	public ItemBase(String filePath, JSONObject values, ExpressionBuilder expBuilder) throws JSONException {

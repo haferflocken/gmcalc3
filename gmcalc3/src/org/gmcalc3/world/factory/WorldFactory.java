@@ -1,12 +1,11 @@
 package org.gmcalc3.world.factory;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
+import org.gmcalc3.util.Handies;
 import org.gmcalc3.world.Component;
 import org.gmcalc3.world.ItemBase;
 import org.gmcalc3.world.World;
@@ -142,13 +141,14 @@ public class WorldFactory implements Factory<World> {
 		
 		// Try to make a world and load the characters.
 		try {
-			World world = new World(parsedRules, expressionBuilder, prefixes, materials, itemBases);
+			String fileName = worldDir.getName();
+			World world = new World(World.DEVICE_WORLD_VAL, fileName, parsedRules, expressionBuilder, prefixes, materials, itemBases);
 			
 			characterFactory.setWorld(world);
 			Map<String, Character> characters = runFactory(characterFactory, characterDir);
 			world.setCharacterMap(characters);
 			
-			loadedWorlds.put(worldDir.getName(), world);
+			loadedWorlds.put(fileName, world);
 			
 			world.logContents();
 		}
@@ -170,16 +170,11 @@ public class WorldFactory implements Factory<World> {
 	}
 	
 	private JSONObject loadAsJson(File f) {
-		Scanner scanner = null;
-		try {
-			scanner = new Scanner(f);
-			StringBuilder contentBuilder = new StringBuilder();
-			while (scanner.hasNextLine()) {
-				contentBuilder.append(scanner.nextLine());
-			}
+		String contents = Handies.readFile(f);
 			
+		if (contents != null) {
 			// Once we have read in the file, tokenize it.
-			JSONTokener tokener = new JSONTokener(contentBuilder.toString());
+			JSONTokener tokener = new JSONTokener(contents);
 			try {
 				return (JSONObject)tokener.nextValue();
 			}
@@ -187,11 +182,7 @@ public class WorldFactory implements Factory<World> {
 				Log.d("gmcalc3-json", "Failed to load " + f.getName() + " as JSON: " + e.getMessage());
 			}
 		}
-		catch (FileNotFoundException e) {}
-		finally {
-			if (scanner != null)
-				scanner.close();
-		}
+		
 		return null;
 	}
 	

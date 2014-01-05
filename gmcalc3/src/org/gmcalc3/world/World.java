@@ -12,15 +12,22 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Arrays;
 
+import org.gmcalc3.DeviceWorldsActivity;
+import org.gmcalc3.TableActivity;
 import org.hafermath.expression.ExpressionBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.graphics.Color;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
-public class World {
+public class World implements Parcelable {
+	
+	public static final byte DEVICE_WORLD_VAL = 0;
+	public static final byte TABLE_WORLD_VAL = 1;
 	
 	// The default rarity colors.
 	private static final int[] DEFAULT_COLOR_RARITIES = { Integer.MIN_VALUE };
@@ -33,7 +40,8 @@ public class World {
 	public static final String CHARACTERBASESTATS_KEY = "characterBase";
 	
 	// Instance fields.
-	private String worldLoc;											// The location of the world in the file GMCalc2.
+	private final byte deviceWorld;										// If 0, the world is local to the device. Otherwise, the world belongs to the table.
+	private String fileName;											// The name of the world in the file system.
 	private String name;												// The name of the world.
 	private int[] colorRarities;										// The rarity colors that are displayed in this world.
 	private int[] colorValues;
@@ -45,19 +53,21 @@ public class World {
 	private Map<String, Character> characters;							// The characters.
 	
 	// Constructor.
-	public World(JSONObject ruleValues, ExpressionBuilder expBuilder, Map<String, Component> prefixes,
-			Map<String, Component> materials, Map<String, ItemBase> itemBases) throws JSONException {
-		setRulesToDefault();
-		setRules(ruleValues, expBuilder);
+	public World(byte deviceWorld, String fileName, JSONObject ruleValues, ExpressionBuilder expBuilder,
+			Map<String, Component> prefixes, Map<String, Component> materials, Map<String, ItemBase> itemBases) throws JSONException {
+		this.deviceWorld = deviceWorld;
+		this.fileName = fileName;
 		this.prefixes = prefixes;
 		this.materials = materials;
 		this.itemBases = itemBases;
 		characters = null;
+		setRulesToDefault();
+		setRules(ruleValues, expBuilder);
 	}
 	
 	// Set the rules to default values.
 	public void setRulesToDefault() {
-		name = worldLoc;
+		name = fileName;
 		colorRarities = DEFAULT_COLOR_RARITIES;
 		colorValues = DEFAULT_COLOR_VALUES;
 		characterStatCategories = new LinkedHashMap<String, String[]>();
@@ -116,9 +126,18 @@ public class World {
 			characterStatCategories.put(statCategoryName, statCategoryContents);
 		}
 		
-		// Get the player base stats.
+		// Get the character base stats.
 		JSONObject rawBaseStats = rawRules.getJSONObject(CHARACTERBASESTATS_KEY);
 		characterBaseStats = new StatMap(rawBaseStats, expBuilder);
+	}
+	
+	// Get the file name.
+	public boolean isDeviceWorld() {
+		return deviceWorld == 0;
+	}
+	
+	public String getFileName() {
+		return fileName;
 	}
 	
 	// Get the name.
@@ -283,4 +302,36 @@ public class World {
 		
 		Log.d("gmcalc3-json", "</" + name + ">");
 	}
+
+	@Override
+    public int describeContents() {
+        return 0;
+    }
+
+	@Override
+    public void writeToParcel(Parcel out, int flags) {
+		out.writeByte(deviceWorld);
+		out.writeString(fileName);
+    }
+
+    public static final Parcelable.Creator<World> CREATOR
+            = new Parcelable.Creator<World>() {
+        public World createFromParcel(Parcel in) {
+            byte deviceWorld = in.readByte();
+            String fileName = in.readString();
+            if (deviceWorld == 0) {
+            	return DeviceWorldsActivity.deviceWorlds.get(fileName);
+            }
+            else {
+            	if (TableActivity.tableWorlds == null)
+            		return null;
+            	else
+            		return TableActivity.tableWorlds.get(fileName);
+            }
+        }
+
+        public World[] newArray(int size) {
+            return new World[size];
+        }
+    };
 }

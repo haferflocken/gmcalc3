@@ -12,7 +12,7 @@
         
         <fragment
 			android:id="@+id/worldExplorer"
-			android:name="org.gmcalc3.WorldExplorerFragment"
+			android:name="org.gmcalc3.WorldListFragment"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:layout_alignParentLeft="true"

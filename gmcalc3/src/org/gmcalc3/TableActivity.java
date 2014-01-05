@@ -1,5 +1,9 @@
 package org.gmcalc3;
 
+import java.util.Map;
+
+import org.gmcalc3.world.World;
+
 import com.astuetz.PagerSlidingTabStrip;
 
 import android.app.Fragment;
@@ -11,9 +15,11 @@ import android.view.MenuItem;
 
 public class TableActivity extends NavDrawerActivity {
 	
-	private WorldExplorerFragment worldExplorer;
-	private ListFragment charactersFragment;
+	public static Map<String, World> tableWorlds;
+	
 	private ListFragment partyFragment;
+	private WorldListFragment worldList;
+	private ListFragment connectionsFragment;
 	private ViewPager tabPager;
 	
 	@Override
@@ -23,25 +29,26 @@ public class TableActivity extends NavDrawerActivity {
 		labelId = R.string.label_table;
 		createNavDrawer(savedInstanceState);
 		
-		// Create the world explorer.
-		worldExplorer = new WorldExplorerFragment();
-		Bundle wEArgs = new Bundle();
-		worldExplorer.setArguments(wEArgs);
-		
-		// Create the characters view.
-		charactersFragment = new ListFragment();
-		Bundle cFArgs = new Bundle();
-		charactersFragment.setArguments(cFArgs);
-		
 		// Create the party view.
 		partyFragment = new ListFragment();
 		Bundle pFArgs = new Bundle();
 		partyFragment.setArguments(pFArgs);
 		
+		// Create the world list.
+		worldList = new WorldListFragment();
+		Bundle wLArgs = new Bundle();
+		wLArgs.putByte(WorldListFragment.BUNDLE_WORLDS_LOC, World.TABLE_WORLD_VAL);
+		worldList.setArguments(wLArgs);
+		
+		// Create the connections view.
+		connectionsFragment = new ListFragment();
+		Bundle cFArgs = new Bundle();
+		connectionsFragment.setArguments(cFArgs);
+		
 		// Set up the tab pager.
 		tabPager = (ViewPager)findViewById(R.id.tabPager);
-		String[] tabTitles = new String[] { "Worlds", "Characters", "Party" };
-		Fragment[] tabFragments = new Fragment[] { worldExplorer, charactersFragment, partyFragment };
+		String[] tabTitles = new String[] { "Party", "Worlds", "Connections" };
+		Fragment[] tabFragments = new Fragment[] { partyFragment, worldList, connectionsFragment };
 		TabAdapter tabAdapter = new TabAdapter(getFragmentManager(), tabTitles, tabFragments);
 		tabPager.setAdapter(tabAdapter);
 		

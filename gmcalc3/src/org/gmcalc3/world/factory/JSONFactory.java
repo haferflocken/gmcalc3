@@ -2,15 +2,14 @@ package org.gmcalc3.world.factory;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileNotFoundException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
+import org.gmcalc3.util.Handies;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -76,18 +75,13 @@ public abstract class JSONFactory<E> implements Factory<E> {
 
 	@Override
 	public void loadNext() {
-		// Get the file and read it in with a scanner.
+		// Get the file and read it in.
 		File f = filesToLoad.get(loadIndex);
-		Scanner scanner = null;
-		try {
-			scanner = new Scanner(f);
-			StringBuilder contentBuilder = new StringBuilder();
-			while (scanner.hasNextLine()) {
-				contentBuilder.append(scanner.nextLine());
-			}
+		String contents = Handies.readFile(f);
 			
+		if (contents != null) {
 			// Once we have read in the file, tokenize it.
-			JSONTokener tokener = new JSONTokener(contentBuilder.toString());
+			JSONTokener tokener = new JSONTokener(contents);
 			try {
 				// Make the instance.
 				JSONObject jsonObject = (JSONObject)tokener.nextValue();
@@ -101,11 +95,6 @@ public abstract class JSONFactory<E> implements Factory<E> {
 			catch (JSONException e) {
 				Log.d("gmcalc3-json", "Failed to load " + f.getName() + " as JSON: " + e.getMessage());
 			}
-		}
-		catch (FileNotFoundException e) {}
-		finally {
-			if (scanner != null)
-				scanner.close();
 		}
 		
 		loadIndex++;
