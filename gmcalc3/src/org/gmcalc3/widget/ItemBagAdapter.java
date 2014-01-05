@@ -10,12 +10,27 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
+/**
+ * Adapts a list bag of items to an expandable list view, with each group
+ * displaying an item and the group's children displaying the item's stats.
+ * 
+ * @author John Werner
+ */
+
 public final class ItemBagAdapter extends BaseExpandableListAdapter {
 	
 	private ListBag<Item> bag;
 	private String[][] childContents;
 	private LayoutInflater inflater;
 	
+	/**
+	 * Construct an adapter.
+	 * 
+	 * @param context
+	 *			Any non-null context will do.
+	 * @param bag
+	 *			The bag to adapt.
+	 */
 	public ItemBagAdapter(Context context, ListBag<Item> bag) {
 		this.bag = bag;
 		buildChildContents();

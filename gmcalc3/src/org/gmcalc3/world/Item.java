@@ -11,6 +11,8 @@ package org.gmcalc3.world;
 
 public class Item {
 	
+	private static final Component[] EMPTY_COMPONENT_ARRAY = new Component[0]; // An empty array of components.
+	
 	private final World world;		// The world this item exists in. It's too integral to the other fields to allow it to change.
 	private Component[] prefixes;	// The prefixes.
 	private Component[] materials;	// The materials.
@@ -19,7 +21,15 @@ public class Item {
 	private String name;			// The name. Is a combination of the prefixes, materials, and item base names.
 	private int rarity;				// The rarity. This is the sum of the rarities of the prefixes, materials, and item base.
 	
-	// Constructor.
+	// Constructors.
+	public Item(World world, ItemBase itemBase) {
+		this(world, EMPTY_COMPONENT_ARRAY, EMPTY_COMPONENT_ARRAY, itemBase);
+	}
+	
+	public Item(World world, Component[] prefixes, ItemBase itemBase) {
+		this(world, prefixes, EMPTY_COMPONENT_ARRAY, itemBase);
+	}
+	
 	public Item(World world, Component[] prefixes, Component[] materials, ItemBase itemBase) {
 		this.world = world;
 		this.itemBase = itemBase;
@@ -120,7 +130,7 @@ public class Item {
 		int numValid = 0;
 		boolean[] validity = new boolean[newPrefixes.length];
 		for (int i = 0; i < newPrefixes.length; i++) {
-			validity[i] = itemBase.getPrefixReqs().passes(newPrefixes[i]);
+			validity[i] = newPrefixes[i].hasTags(itemBase.getPrefixReqs());
 			if (validity[i])
 				numValid++;
 		}
@@ -158,7 +168,7 @@ public class Item {
 		// Assign the valid materials from newMaterials and use the defaults otherwise.
 		materials = new Component[defaultMaterials.length];
 		for (int i = 0; i < numChecks; i++) {
-			boolean valid = itemBase.getMaterialReqs()[i].passes(newMaterials[i]);
+			boolean valid = newMaterials[i].hasTags(itemBase.getMaterialReqs()[i]);
 			if (valid)
 				materials[i] = newMaterials[i];
 			else

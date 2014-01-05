@@ -18,54 +18,25 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.graphics.Color;
+import android.util.Log;
 
 public class World {
 	
-	// The class for RarityColors.
-	public static class RarityColor implements Comparable<RarityColor> {
-		
-		private int color;
-		private int rarity;
-		
-		public RarityColor(int c, int r) {
-			color = c;
-			rarity = r;
-		}
-		
-		public int compareTo(RarityColor other) {
-			// First, compare rarity.
-			if (rarity < other.rarity)
-				return -1;
-			if (rarity > other.rarity)
-				return 1;
-			// If rarities are equal, compare color values.
-			if (color < other.color)
-				return -1;
-			if (color > other.color)
-				return 1;
-			return 0;
-		}
-		
-		public boolean equals(Object other) {
-			if (other instanceof RarityColor) {
-				RarityColor o = (RarityColor)other;
-				if (color == o.color && rarity == o.rarity)
-					return true;
-			}
-			return false;
-		}
-	}
+	// The default rarity colors.
+	private static final int[] DEFAULT_COLOR_RARITIES = { Integer.MIN_VALUE };
+	private static final int[] DEFAULT_COLOR_VALUES = { android.R.color.white };
 	
 	// Keys for loading.
 	public static final String NAME_KEY = "name";
 	public static final String RARITYCOLORS_KEY = "rarityColors";
-	public static final String PLAYERSTATCATEGORIES_KEY = "playerStatCategories";
-	public static final String PLAYERBASESTATS_KEY = "playerBase";
+	public static final String CHARACTERSTATCATEGORIES_KEY = "characterStatCategories";
+	public static final String CHARACTERBASESTATS_KEY = "characterBase";
 	
 	// Instance fields.
 	private String worldLoc;											// The location of the world in the file GMCalc2.
 	private String name;												// The name of the world.
-	private RarityColor[] rarityColors;									// The rarity colors that are displayed in this world.
+	private int[] colorRarities;										// The rarity colors that are displayed in this world.
+	private int[] colorValues;
 	private LinkedHashMap<String, String[]> characterStatCategories;	// The categories stats are sorted into in PlayerTabs.
 	private StatMap characterBaseStats;									// The player's base stats.
 	private Map<String, Component> prefixes;							// The prefixes.
@@ -87,7 +58,8 @@ public class World {
 	// Set the rules to default values.
 	public void setRulesToDefault() {
 		name = worldLoc;
-		rarityColors = new RarityColor[] { new RarityColor(android.R.color.white, Integer.MIN_VALUE) };
+		colorRarities = DEFAULT_COLOR_RARITIES;
+		colorValues = DEFAULT_COLOR_VALUES;
 		characterStatCategories = new LinkedHashMap<String, String[]>();
 		characterBaseStats = null;
 	}
@@ -99,28 +71,40 @@ public class World {
 		
 		// Get the rarity colors.
 		JSONObject rawRarityColors = rawRules.getJSONObject(RARITYCOLORS_KEY);
-		ArrayList<RarityColor> rarityColorList = new ArrayList<RarityColor>(); // Make ArrayList to put the parsed colors into.
+		int maxNumColors = rawRarityColors.length();
+		int[] parsedColorRarities = new int[maxNumColors];
+		int[] parsedColorValues = new int[maxNumColors];
+		int numColors = 0;
 		
 		JSONArray rarityColorNames = rawRarityColors.names();
-		for (int i = 0; i < rarityColorNames.length(); i++) {
+		for (int i = 0; i < maxNumColors; i++) {
 			String rarityColorName = rarityColorNames.getString(i);
-			int rarityVal = Integer.parseInt(rarityColorName);
+			parsedColorRarities[numColors] = Integer.parseInt(rarityColorName);
+			
 			JSONArray rawColor = rawRarityColors.getJSONArray(rarityColorName);
 			int red = rawColor.getInt(0);
 			int green = rawColor.getInt(1);
 			int blue = rawColor.getInt(2);
-			int rarityColor = Color.rgb(red, green, blue);
-			rarityColorList.add(new RarityColor(rarityColor, rarityVal));
+			parsedColorValues[numColors] = Color.rgb(red, green, blue);
+			numColors++;
 		}
 			
-		// If we successfully parsed any, set rarityColors to the contents of rarityColorList and then sort.
-		if (rarityColorList.size() > 0) {
-			rarityColors = rarityColorList.toArray(new RarityColor[rarityColorList.size()]);
-			Arrays.sort(rarityColors);
+		// If we parsed any, keep them.
+		if (numColors == maxNumColors) {
+			colorRarities = parsedColorRarities;
+			colorValues = parsedColorValues;
+		}
+		else {
+			colorRarities = new int[numColors];
+			colorValues = new int[numColors];
+			for (int i = 0; i < numColors; i++) {
+				colorRarities[i] = parsedColorRarities[i];
+				colorValues[i] = parsedColorValues[i];
+			}
 		}
 		
 		// Get the character stat categories.
-		JSONObject rawStatCategories = rawRules.getJSONObject(PLAYERSTATCATEGORIES_KEY);
+		JSONObject rawStatCategories = rawRules.getJSONObject(CHARACTERSTATCATEGORIES_KEY);
 		JSONArray rawStatCategoryNames = rawStatCategories.names();
 		for (int i = 0; i < rawStatCategoryNames.length(); i++) {
 			String statCategoryName = rawStatCategoryNames.getString(i);
@@ -133,7 +117,7 @@ public class World {
 		}
 		
 		// Get the player base stats.
-		JSONObject rawBaseStats = rawRules.getJSONObject(PLAYERBASESTATS_KEY);
+		JSONObject rawBaseStats = rawRules.getJSONObject(CHARACTERBASESTATS_KEY);
 		characterBaseStats = new StatMap(rawBaseStats, expBuilder);
 	}
 	
@@ -195,41 +179,31 @@ public class World {
 	// Get the rarity color of an item.
 	public int getRarityColor(Item item) {
 		int rarity = item.getRarity();
-		for (int i = rarityColors.length - 1; i > -1; i--) {
-			if (rarity >= rarityColors[i].rarity)
-				return rarityColors[i].color;
+		for (int i = colorRarities.length - 1; i > -1; i--) {
+			if (rarity >= colorRarities[i])
+				return colorValues[i];
 		}
 		return android.R.color.black;
 	}
 	
 	// Helper method to get components matching from a map.
-	private Component[] getComponentsMatching(TagRequirement requirement, Map<String, Component> map) {
-		// Count the number of prefixes.
-		int numOut = 0;
+	private Component[] getComponentsMatching(String[] requirement, Map<String, Component> map) {
+		ArrayList<Component> out = new ArrayList<Component>();
 		for (Map.Entry<String, Component> entry : map.entrySet()) {
 			Component c = entry.getValue();
-			if (requirement.passes(c))
-				numOut++;
+			if (c.hasTags(requirement))
+				out.add(c);
 		}
-				
-		// Fill and return an output array.
-		Component[] out = new Component[numOut];
-		int i = 0;
-		for (Map.Entry<String, Component> entry : map.entrySet()) {
-			Component c = entry.getValue();
-			if (requirement.passes(c))
-				out[i++] = c;
-		}
-		return out;
+		return out.toArray(new Component[out.size()]);
 	}
 	
 	// Get the prefixes matching a tag requirement.
-	public Component[] getPrefixesMatching(TagRequirement requirement) {
+	public Component[] getPrefixesMatching(String[] requirement) {
 		return getComponentsMatching(requirement, prefixes);
 	}
 	
 	// Get the materials matching a tag requirement.
-	public Component[] getMaterialsMatching(TagRequirement requirement) {
+	public Component[] getMaterialsMatching(String[] requirement) {
 		return getComponentsMatching(requirement, materials);
 	}
 	
@@ -258,35 +232,55 @@ public class World {
 		characters = c;
 	}
 	
-	// Make an item with no prefixes and with default materials.
-	public Item makeItem(ItemBase itemBase) {
-		// Get the default materials.
-		String[] defMatNames = itemBase.getDefaultMaterials();
-		
-		// If there are no default materials, make a materialless item.
-		if (defMatNames == null)
-			return makeItem(new Component[0], itemBase);
-		
-		// Otherwise, find the materials and make the item.
-		ArrayList<Component> materialList = new ArrayList<Component>();
-		for (int i = 0; i < defMatNames.length; i++) {
-			Component mat = materials.get(defMatNames[i]);
-			if (mat != null)
-				materialList.add(mat);
+	// Output this world to the log.
+	public void logContents() {
+		Log.d("gmcalc3-json", "<" + name + ">");
+		Log.d("gmcalc3-json", "<Rules>");
+		Log.d("gmcalc3-json", "<Rarity Colors>");
+		int numRarityColors = colorRarities.length;
+		for (int i = 0; i < numRarityColors; i++) {
+			Log.d("gmcalc3-json", colorRarities[i] + ": " + Integer.toHexString(colorValues[i]));
 		}
+		Log.d("gmcalc3-json", "</Rarity Colors>");
 		
-		// Make and return the item.
-		Component[] materials = materialList.toArray(new Component[materialList.size()]);
-		return makeItem(materials, itemBase);
-	}
-	
-	// Make an item with no prefixes and some materials.
-	public Item makeItem(Component[] materials, ItemBase itemBase) {
-		return makeItem(new Component[0], materials, itemBase);
-	}
-	
-	// Make an item with some prefixes and some materials.
-	public Item makeItem(Component[] prefixes, Component[] materials, ItemBase itemBase) {
-		return new Item(this, prefixes, materials, itemBase);
+		Log.d("gmcalc3-json", "<Character Stat Categories>");
+		for (Map.Entry<String, String[]> entry : characterStatCategories.entrySet()) {
+			Log.d("gmcalc3-json", entry.getKey() + '=' + Arrays.toString(entry.getValue()));
+		}
+		Log.d("gmcalc3-json", "</Character Stat Categories>");
+		
+		Log.d("gmcalc3-json", "<Character Base Stats>");
+		String[] charBaseStatsStrings = characterBaseStats.toDisplayStrings();
+		for (String s : charBaseStatsStrings) {
+			Log.d("gmcalc3-json", s);
+		}
+		Log.d("gmcalc3-json", "</Character Base Stats>");
+		Log.d("gmcalc3-json", "</Rules>");
+		
+		Log.d("gmcalc3-json", "<Prefixes>");
+		for (Map.Entry<String, Component> entry : prefixes.entrySet()) {
+			Log.d("gmcalc3-json", entry.getKey());
+		}
+		Log.d("gmcalc3-json", "</Prefixes>");
+		
+		Log.d("gmcalc3-json", "<Materials>");
+		for (Map.Entry<String, Component> entry : materials.entrySet()) {
+			Log.d("gmcalc3-json", entry.getKey());
+		}
+		Log.d("gmcalc3-json", "</Materials>");
+		
+		Log.d("gmcalc3-json", "<Item Bases>");
+		for (Map.Entry<String, ItemBase> entry : itemBases.entrySet()) {
+			Log.d("gmcalc3-json", entry.getKey());
+		}
+		Log.d("gmcalc3-json", "</Item Bases>");
+		
+		Log.d("gmcalc3-json", "<Characters>");
+		for (Map.Entry<String, Character> entry : characters.entrySet()) {
+			Log.d("gmcalc3-json", entry.getKey());
+		}
+		Log.d("gmcalc3-json", "</Characters>");
+		
+		Log.d("gmcalc3-json", "</" + name + ">");
 	}
 }

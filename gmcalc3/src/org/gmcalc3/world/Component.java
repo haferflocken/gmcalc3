@@ -76,5 +76,15 @@ public class Component {
 	public Set<String> getTags() {
 		return tags;
 	}
+	
+	// Check if this meets some tag requirements.
+	public boolean hasTags(String[] check) {
+		int numChecks = check.length;
+		for (int i = 0; i < numChecks; i++) {
+			if (!tags.contains(check[i]))
+				return false;
+		}
+		return true;
+	}
 
 }

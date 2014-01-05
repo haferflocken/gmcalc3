@@ -180,7 +180,7 @@ public class Stat {
 			out[0] = range.toString();
 		else
 			out[0] = range.toString() + ((expVal < 0)? " - " + (expVal * -1) : " + " + expVal);
-		//Return.
+		// Return.
 		return out;
 	}
 	

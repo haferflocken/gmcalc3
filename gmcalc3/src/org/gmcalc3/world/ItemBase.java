@@ -1,5 +1,6 @@
 package org.gmcalc3.world;
 
+import org.gmcalc3.util.Handies;
 import org.hafermath.expression.ExpressionBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -7,12 +8,14 @@ import org.json.JSONObject;
 
 public class ItemBase extends Component {
 	
+	private static final String[] EMPTY_STRING_ARRAY = {};
+	
 	public static final String PREFIXREQS_KEY = "prefixRequirements";
 	public static final String MATERIALREQS_KEY = "materialRequirements";
 	public static final String DEFAULTMATERIALS_KEY = "defaultMaterials";
 	
-	private TagRequirement prefixReqs;		// The tag requirements for all prefixes.
-	private TagRequirement[] materialReqs;	// The tag requirements for each material.
+	private String[] prefixReqs;		// The tag requirements for all prefixes.
+	private String[][] materialReqs;	// The tag requirements for each material.
 	private String[] defaultMaterials;		// The default materials that Item uses if no materials are passed to item.
 	
 	// Constructors.
@@ -22,17 +25,18 @@ public class ItemBase extends Component {
 		// Get the prefix tag requirements.
 		JSONArray rawPrefixReqs = values.getJSONArray(PREFIXREQS_KEY);
 		if (rawPrefixReqs.length() > 0) {
-			prefixReqs = new TagRequirement(rawPrefixReqs);
+			prefixReqs = Handies.jsonArrayToStringArray(rawPrefixReqs);
 		}
 		else {
-			prefixReqs = new TagRequirement();
+			prefixReqs = EMPTY_STRING_ARRAY;
 		}
 		
 		// Get the material tag requirements.
 		JSONArray rawMaterialReqs = values.getJSONArray(MATERIALREQS_KEY);
-		materialReqs = new TagRequirement[rawMaterialReqs.length()];
-		for (int i = 0; i < materialReqs.length; i++) {
-			materialReqs[i] = new TagRequirement(rawMaterialReqs.getJSONArray(i));
+		int numMaterials = rawMaterialReqs.length();
+		materialReqs = new String[numMaterials][];
+		for (int i = 0; i < numMaterials; i++) {
+			materialReqs[i] = Handies.jsonArrayToStringArray(rawMaterialReqs.getJSONArray(i));
 		}
 		
 		// Get the default materials.
@@ -44,15 +48,16 @@ public class ItemBase extends Component {
 	}
 
 	// Accessors.
-	public TagRequirement getPrefixReqs() {
+	public String[] getPrefixReqs() {
 		return prefixReqs;
 	}
 	
-	public TagRequirement[] getMaterialReqs() {
+	public String[][] getMaterialReqs() {
 		return materialReqs;
 	}
 	
 	public String[] getDefaultMaterials() {
 		return defaultMaterials;
 	}
+	
 }

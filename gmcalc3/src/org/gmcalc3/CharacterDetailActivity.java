@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.ClipData;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 import android.view.View.DragShadowBuilder;
@@ -16,6 +17,7 @@ import android.widget.ExpandableListView;
 import org.gmcalc3.widget.CharacterStatAdapter;
 import org.gmcalc3.widget.ItemBagAdapter;
 import org.gmcalc3.world.Character;
+import org.gmcalc3.world.World;
 
 import com.astuetz.PagerSlidingTabStrip;
 
@@ -72,7 +74,11 @@ public class CharacterDetailActivity extends Activity {
 		setContentView(R.layout.activity_character_detail);
 		
 		// TODO: Get the character from the bundle.
-		character = new Character("Test Character", null);
+		//character = new Character("Test Character", null);
+		character = DeviceWorldsActivity.deviceWorlds.get("forgottenrealms").getCharacter("playerTest.json");
+		
+		// Set the activity title to the character's name.
+		setTitle(character.getName());
 		
 		// Calc the current screen width in dp.
 		int width = (int)(getResources().getDisplayMetrics().widthPixels / getResources().getDisplayMetrics().density);
@@ -104,6 +110,7 @@ public class CharacterDetailActivity extends Activity {
 		super.onSaveInstanceState(outState);
 		
 		// TODO: Save the character to the bundle.
+		// Format: (deviceWorlds | tableWorlds), worldKey, characterKey
 	}
 	
 	// Set up the tabbed layout when it's being used.
@@ -140,61 +147,18 @@ public class CharacterDetailActivity extends Activity {
 		inventoryFragment = (ExpandableListFragment)getFragmentManager().findFragmentById(R.id.inventoryFragment);
 	}
 	
-	/*private List<Map<String, ?>> createMaps(String[] strings) {
-		List<Map<String, ?>> out = new ArrayList<Map<String, ?>>();
-		for (String s : strings) {
-			Map<String, String> row = new HashMap<String, String>();
-			row.put("text1", s);
-			out.add(row);
-		}
-		return out;
-	}
-	
-	private List<List<Map<String, ?>>> createChildMaps(String[][] strings) {
-		List<List<Map<String, ?>>> out = new ArrayList<List<Map<String, ?>>>();
-		for (String[] s : strings) {
-			out.add(createMaps(s));
-		}
-		return out;
-	}
-	
-	private ExpandableListAdapter createExpandableListAdapter(List<? extends Map<String, ?>> groupData,
-			List<? extends List<? extends Map<String, ?>>> childData) {
-		int groupLayout = android.R.layout.simple_expandable_list_item_1;
-		String[] groupFrom = new String[] { "text1" };
-		int[] groupTo = new int[] { android.R.id.text1 };
-		int childLayout = android.R.layout.simple_list_item_1;
-		String[] childFrom = new String[] { "text1" };
-		int[] childTo = new int[] { android.R.id.text1 };
-		return new SimpleExpandableListAdapter(this,
-				groupData, groupLayout, groupFrom, groupTo,
-				childData, childLayout, childFrom, childTo);
-	}*/
-	
 	// Populate the stats fragment using the character.
 	protected void populateStatsFragment() {
-		//statsFragment.setExpandableListAdapter(new CharacterStatAdapter(this, character));
+		statsFragment.setExpandableListAdapter(new CharacterStatAdapter(this, character));
 	}
 
 	// Populate the equipped fragment using the character.
 	protected void populateEquippedFragment() {
-		// Populate the fragment with bullshit.
-		/*equippedFragment.setExpandableListAdapter(createExpandableListAdapter(
-				createMaps(new String[] { "King Dick Alpha Cleaver", "Adamantite Chainsword", "Wizard Robes" }),
-				createChildMaps(new String[][] {
-						{ "Damn this thing is fine" }, { "WHOOAAAA" }, { "YEAH BWOY MAGICKS" },
-				})));*/
 		equippedFragment.setExpandableListAdapter(new ItemBagAdapter(this, character.getEquipped()));
 	}
 	
 	// Populate the inventory fragment using the character.
 	protected void populateInventoryFragment() {
-		// Populate the fragment with bullshit.
-		/*inventoryFragment.setExpandableListAdapter(createExpandableListAdapter(
-				createMaps(new String[] { "Gold x100" }),
-				createChildMaps(new String[][] {
-						{ "Swag in solid form." },
-				})));*/
 		inventoryFragment.setExpandableListAdapter(new ItemBagAdapter(this, character.getInventory()));
 	}
 	

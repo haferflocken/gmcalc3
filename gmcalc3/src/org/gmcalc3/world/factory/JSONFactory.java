@@ -15,12 +15,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import android.util.Log;
+
 public abstract class JSONFactory<E> implements Factory<E> {
 	
 	public static final String EXTENSION = ".json";
 	
 	protected final FileFilter extensionFilter = new FileFilter() {
 		public boolean accept(File f) {
+			if (f.isDirectory())
+				return true;
 			return f.getName().endsWith(EXTENSION);
 		}
 	};
@@ -78,8 +82,8 @@ public abstract class JSONFactory<E> implements Factory<E> {
 		try {
 			scanner = new Scanner(f);
 			StringBuilder contentBuilder = new StringBuilder();
-			while (scanner.hasNext()) {
-				contentBuilder.append(scanner.next());
+			while (scanner.hasNextLine()) {
+				contentBuilder.append(scanner.nextLine());
 			}
 			
 			// Once we have read in the file, tokenize it.
@@ -88,11 +92,14 @@ public abstract class JSONFactory<E> implements Factory<E> {
 				// Make the instance.
 				JSONObject jsonObject = (JSONObject)tokener.nextValue();
 				String path = f.getAbsolutePath().substring(directory.getAbsolutePath().length());
+				if (path.charAt(0) == '/')
+					path = path.substring(1);
 				E instance = makeInstance(path, jsonObject);
 				if (instance != null)
 					loadedValues.put(path, instance);
 			}
 			catch (JSONException e) {
+				Log.d("gmcalc3-json", "Failed to load " + f.getName() + " as JSON: " + e.getMessage());
 			}
 		}
 		catch (FileNotFoundException e) {}

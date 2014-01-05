@@ -12,6 +12,13 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
+/**
+ * Adapts a character's stat map to an expandable list view, with the stats grouped as
+ * specified by the character's world.
+ * 
+ * @author John Werner
+ */
+
 public final class CharacterStatAdapter extends BaseExpandableListAdapter {
 	
 	private Character character;
@@ -19,6 +26,14 @@ public final class CharacterStatAdapter extends BaseExpandableListAdapter {
 	private String[][] childStrings;
 	private LayoutInflater inflater;
 	
+	/**
+	 * Construct an adapter.
+	 * 
+	 * @param context
+	 *			Any non-null context will do.
+	 * @param character
+	 *			The character to adapt.
+	 */
 	public CharacterStatAdapter(Context context, Character character) {
 		this.character = character;
 		buildContents();

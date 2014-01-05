@@ -1,0 +1,20 @@
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/com/astuetz"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" >
+	
+	<TextView 
+	    android:id="@+id/listHeader"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentLeft="true"
+	    android:layout_alignParentTop="true"
+	    android:text="" />
+	
+	<include
+	    android:layout_below="@+id/listHeader"
+	    android:layout_alignParentLeft="true"
+	    layout="@android:layout/list_content" />"
+    
+</RelativeLayout>

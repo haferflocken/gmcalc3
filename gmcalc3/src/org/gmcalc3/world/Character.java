@@ -6,6 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 public class Character {
 
 	// Keys for loading.
@@ -113,11 +115,13 @@ public class Character {
 			return;
 		
 		// Get the item base.
-		String rawItemBase = data.getString(ITEMBASE_KEY);
-		ItemBase itemBase = world.getItemBase(rawItemBase);
+		String itemBasePath = data.getString(ITEMBASE_KEY);
+		ItemBase itemBase = world.getItemBase(itemBasePath);
 		// If we fail to find the item base, give up.
-		if (itemBase == null)
+		if (itemBase == null) {
+			Log.d("gmcalc3-json", "Item creation error: failed to find item base " + itemBasePath);
 			return;
+		}
 		
 		// Get the prefixes.
 		JSONArray rawPrefixes = data.getJSONArray(PREFIXES_KEY);
@@ -126,8 +130,10 @@ public class Character {
 			String prefixPath = rawPrefixes.getString(i);
 			prefixes[i] = world.getPrefix(prefixPath);
 			// If we fail to find a prefix, give up.
-			if (prefixes[i] == null) 
+			if (prefixes[i] == null) {
+				Log.d("gmcalc3-json", "Item creation error: failed to find prefix " + prefixPath);
 				return;
+			}
 		}
 		
 		// Get the materials.
@@ -137,17 +143,14 @@ public class Character {
 			String materialPath = rawMaterials.getString(i);
 			materials[i] = world.getMaterial(materialPath);
 			// If we fail to find a material, give up.
-			if (materials[i] == null)
+			if (materials[i] == null) {
+				Log.d("gmcalc3-json", "Item creation error: failed to find material " + materialPath);
 				return;
+			}
 		}
 
-		// Make the item.
-		Item item = world.makeItem(prefixes, materials, itemBase);
-		// If the item couldn't be made, give up.
-		if (item == null)
-			return;
-		
 		// Add the item to the bag.
+		Item item = new Item(world, prefixes, materials, itemBase);
 		bag.add(item, quantity);
 	}
 }
