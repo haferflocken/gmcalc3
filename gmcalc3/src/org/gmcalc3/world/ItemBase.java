@@ -6,6 +6,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 public class ItemBase extends Component {
 	
 	private static final String[] EMPTY_STRING_ARRAY = {};
@@ -19,8 +22,8 @@ public class ItemBase extends Component {
 	private String[] defaultMaterials;	// The default materials that Item uses if no materials are passed to item.
 	
 	// Constructors.
-	public ItemBase(String filePath, JSONObject values, ExpressionBuilder expBuilder) throws JSONException {
-		super(filePath, values, expBuilder);
+	public ItemBase(String filePath, World world, JSONObject values, ExpressionBuilder expBuilder) throws JSONException {
+		super(filePath, world, values, expBuilder);
 		
 		// Get the prefix tag requirements.
 		JSONArray rawPrefixReqs = values.getJSONArray(PREFIXREQS_KEY);
@@ -59,5 +62,18 @@ public class ItemBase extends Component {
 	public String[] getDefaultMaterials() {
 		return defaultMaterials;
 	}
+	
+	public static final Parcelable.Creator<ItemBase> CREATOR
+    		= new Parcelable.Creator<ItemBase>() {
+		public ItemBase createFromParcel(Parcel in) {
+		    World world = in.readParcelable(World.class.getClassLoader());
+		    String filePath = in.readString();
+		    return world.getItemBase(filePath);
+		}
+		
+		public ItemBase[] newArray(int size) {
+		    return new ItemBase[size];
+		}
+	};
 	
 }

@@ -1,4 +1,4 @@
-package org.gmcalc3.widget;
+package org.gmcalc3.adapters;
 
 import java.util.Map;
 

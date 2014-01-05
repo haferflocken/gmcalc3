@@ -10,7 +10,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
-import org.gmcalc3.widget.MapListAdapter;
+import org.gmcalc3.adapters.MapListAdapter;
+import org.gmcalc3.adapters.TabAdapter;
 import org.gmcalc3.world.Component;
 import org.gmcalc3.world.ItemBase;
 import org.gmcalc3.world.World;
@@ -37,8 +38,10 @@ public class WorldDetailActivity extends Activity {
 		@Override
 		public void onListItemClick(ListView l, View v, int position, long id) {
 			// Create a component detail activity.
-			Component p = (Component)l.getItemAtPosition(position);
-			// TODO
+			Component c = (Component)l.getItemAtPosition(position);
+			Intent intent = new Intent(getActivity(), ComponentDetailActivity.class);
+			intent.putExtra(ComponentDetailActivity.BUNDLE_COMPONENT, c);
+			startActivity(intent);
 		}
 	}
 	
@@ -47,7 +50,9 @@ public class WorldDetailActivity extends Activity {
 		public void onListItemClick(ListView l, View v, int position, long id) {
 			// Create an item base detail activity.
 			ItemBase i = (ItemBase)l.getItemAtPosition(position);
-			// TODO
+			Intent intent = new Intent(getActivity(), ItemBaseDetailActivity.class);
+			intent.putExtra(ItemBaseDetailActivity.BUNDLE_ITEMBASE, i);
+			startActivity(intent);
 		}
 	}
 	

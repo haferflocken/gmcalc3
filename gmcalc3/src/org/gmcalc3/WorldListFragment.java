@@ -2,7 +2,7 @@ package org.gmcalc3;
 
 import java.util.Map;
 
-import org.gmcalc3.widget.MapListAdapter;
+import org.gmcalc3.adapters.MapListAdapter;
 import org.gmcalc3.world.World;
 
 import android.app.ListFragment;

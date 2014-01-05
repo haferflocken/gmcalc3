@@ -15,8 +15,9 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
-import org.gmcalc3.widget.CharacterStatAdapter;
-import org.gmcalc3.widget.ItemBagAdapter;
+import org.gmcalc3.adapters.CharacterStatAdapter;
+import org.gmcalc3.adapters.ItemBagAdapter;
+import org.gmcalc3.adapters.TabAdapter;
 import org.gmcalc3.world.Character;
 
 import com.astuetz.PagerSlidingTabStrip;

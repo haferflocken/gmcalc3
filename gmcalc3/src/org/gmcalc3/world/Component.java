@@ -10,7 +10,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Component {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Component implements Parcelable {
 	
 	public static final String NAME_KEY = "name";
 	public static final String STATMAP_KEY = "stats";
@@ -18,26 +21,28 @@ public class Component {
 	public static final String TAGS_KEY = "tags";
 
 	private String filePath;
+	private World world;
 	private String name;
 	private StatMap statMap;
 	private int rarity;
 	private Set<String> tags;
 	
 	// Constructors.
-	public Component(String filePath, String name, StatMap statMap, int rarity, TreeSet<String> tags) {
+	public Component(String filePath, World world, String name, StatMap statMap, int rarity, TreeSet<String> tags) {
 		this.filePath = filePath;
+		this.world = world;
 		this.name = name;
 		this.statMap = statMap;
 		this.rarity = rarity;
 		this.tags = tags;
 	}
 	
-	public Component(String filePath) {
-		this(filePath, "Untitled Item", new StatMap(), 0, new TreeSet<String>());
+	public Component(String filePath, World world) {
+		this(filePath, world, "Untitled Item", new StatMap(), 0, new TreeSet<String>());
 	}
 	
-	public Component(String filePath, JSONObject values, ExpressionBuilder expBuilder) throws JSONException {
-		this(filePath);
+	public Component(String filePath, World world, JSONObject values, ExpressionBuilder expBuilder) throws JSONException {
+		this(filePath, world);
 		
 		// Get the name.
 		name = values.getString(NAME_KEY);
@@ -59,6 +64,10 @@ public class Component {
 	// Accessors.
 	public String getFilePath() {
 		return filePath;
+	}
+	
+	public World getWorld() {
+		return world;
 	}
 	
 	public String getName() {
@@ -86,5 +95,32 @@ public class Component {
 		}
 		return true;
 	}
+	
+	@Override
+    public int describeContents() {
+        return 0;
+    }
+
+	@Override
+    public void writeToParcel(Parcel out, int flags) {
+		out.writeParcelable(world, flags);
+		out.writeString(filePath);
+    }
+
+    public static final Parcelable.Creator<Component> CREATOR
+            = new Parcelable.Creator<Component>() {
+        public Component createFromParcel(Parcel in) {
+            World world = in.readParcelable(World.class.getClassLoader());
+            String filePath = in.readString();
+            Component out = world.getPrefix(filePath);
+            if (out == null)
+            	out = world.getMaterial(filePath);
+            return out;
+        }
+
+        public Component[] newArray(int size) {
+            return new Component[size];
+        }
+    };
 
 }

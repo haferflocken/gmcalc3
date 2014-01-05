@@ -104,18 +104,33 @@ public class WorldFactory implements Factory<World> {
 		File itemBaseDir = new File(worldDir, ITEMBASE_DIR_NAME);
 		File characterDir = new File(worldDir, CHARACTER_DIR_NAME);
 		
-		// Load the world.
+		// Load the world file.
 		JSONObject parsedRules = loadAsJson(ruleFile);
 		if (parsedRules == null) {
 			loadIndex++;
 			return;
 		}
 		
+		// Make the world.
+		String fileName = worldDir.getName();
+		World world;
+		try {
+			world = new World(World.DEVICE_WORLD_VAL, fileName, parsedRules, expressionBuilder);
+		}
+		catch (JSONException e) {
+			Log.d("gmcalc3-json", "Failed to load world " + worldDir.getName() + ": " + e.getMessage());
+			loadIndex++;
+			return;
+		}
+		
 		// Multithread what loading we can.
+		prefixFactory.setWorld(world);
 		FactoryRunner<Component> prefixThread = new FactoryRunner<Component>(prefixFactory, prefixDir);
 		prefixThread.start();
+		materialFactory.setWorld(world);
 		FactoryRunner<Component> materialThread = new FactoryRunner<Component>(materialFactory, materialDir);
 		materialThread.start();
+		itemBaseFactory.setWorld(world);
 		FactoryRunner<ItemBase> itemBaseThread = new FactoryRunner<ItemBase>(itemBaseFactory, itemBaseDir);
 		itemBaseThread.start();
 		
@@ -134,27 +149,20 @@ public class WorldFactory implements Factory<World> {
 			return;
 		}
 		
-		// Get the loaded data.
-		Map<String, Component> prefixes = prefixThread.getLoadedValues();
-		Map<String, Component> materials = materialThread.getLoadedValues();
-		Map<String, ItemBase> itemBases = itemBaseThread.getLoadedValues();
+		// Assign the loaded data.
+		world.setPrefixMap(prefixThread.getLoadedValues());
+		world.setMaterialMap(materialThread.getLoadedValues());
+		world.setItemBaseMap(itemBaseThread.getLoadedValues());
 		
-		// Try to make a world and load the characters.
-		try {
-			String fileName = worldDir.getName();
-			World world = new World(World.DEVICE_WORLD_VAL, fileName, parsedRules, expressionBuilder, prefixes, materials, itemBases);
-			
-			characterFactory.setWorld(world);
-			Map<String, Character> characters = runFactory(characterFactory, characterDir);
-			world.setCharacterMap(characters);
-			
-			loadedWorlds.put(fileName, world);
-			
-			world.logContents();
-		}
-		catch (JSONException e) {
-			Log.d("gmcalc3-json", "Failed to load world " + worldDir.getName() + ": " + e.getMessage());
-		}
+		// Load the characters.
+		characterFactory.setWorld(world);
+		Map<String, Character> characters = runFactory(characterFactory, characterDir);
+		world.setCharacterMap(characters);
+		
+		// Place the world in the loaded worlds map.
+		loadedWorlds.put(fileName, world);
+				
+		world.logContents();
 		
 		loadIndex++;
 	}

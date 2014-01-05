@@ -1,4 +1,4 @@
-package org.gmcalc3.widget;
+package org.gmcalc3.adapters;
 
 import org.gmcalc3.world.Item;
 import org.gmcalc3.world.ListBag;

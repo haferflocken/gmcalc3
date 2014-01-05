@@ -53,14 +53,9 @@ public class World implements Parcelable {
 	private Map<String, Character> characters;							// The characters.
 	
 	// Constructor.
-	public World(byte deviceWorld, String fileName, JSONObject ruleValues, ExpressionBuilder expBuilder,
-			Map<String, Component> prefixes, Map<String, Component> materials, Map<String, ItemBase> itemBases) throws JSONException {
+	public World(byte deviceWorld, String fileName, JSONObject ruleValues, ExpressionBuilder expBuilder) throws JSONException {
 		this.deviceWorld = deviceWorld;
 		this.fileName = fileName;
-		this.prefixes = prefixes;
-		this.materials = materials;
-		this.itemBases = itemBases;
-		characters = null;
 		setRulesToDefault();
 		setRules(ruleValues, expBuilder);
 	}
@@ -244,6 +239,21 @@ public class World implements Parcelable {
 	// Get the number of characters.
 	public int getNumCharacters() {
 		return characters.size();
+	}
+	
+	// Set the prefix map.
+	public void setPrefixMap(Map<String, Component> p) {
+		prefixes = p;
+	}
+	
+	// Set the material map.
+	public void setMaterialMap(Map<String, Component> m) {
+		materials = m;
+	}
+	
+	// Set the item base map.
+	public void setItemBaseMap(Map<String, ItemBase> i) {
+		itemBases = i;
 	}
 
 	// Set the character map.

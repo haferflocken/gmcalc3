@@ -2,6 +2,7 @@ package org.gmcalc3;
 
 import java.util.Map;
 
+import org.gmcalc3.adapters.TabAdapter;
 import org.gmcalc3.world.World;
 
 import com.astuetz.PagerSlidingTabStrip;
