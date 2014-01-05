@@ -1,6 +1,5 @@
-//An ordered bag is a collection that keeps track of the number of each element in it as a number.
-//Inspired by the Bag interface in the Apache Commons Collections framework.
-//Backed by a LinkedHashMap for guaranteed iteration order.
+// An ordered bag is a collection that keeps track of the number of each element in it as a number.
+// Inspired by the Bag interface in the Apache Commons Collections framework.
 
 package org.gmcalc3.world;
 
@@ -12,49 +11,6 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 public class ListBag<E> implements List<E> {
-	
-	// An element in the bag. Stores a value and a count.
-	private static class BagElement<V> {
-		
-		private V value;
-		private int count;
-		
-		private BagElement(V value, int count) {
-			setValue(value);
-			setCount(count);
-		}
-		
-		private V getValue() {
-			return value;
-		}
-		
-		private int getCount() {
-			return count;
-		}
-		
-		private void setValue(V v) {
-			value = v;
-		}
-		
-		private void setCount(int c) {
-			count = c;
-		}
-		
-		// Equals returns true if the values are equal and does not care about count.
-		public boolean equals(Object o) {
-			if (!(o instanceof BagElement<?>))
-				return false;
-			BagElement<?> other = (BagElement<?>)o;
-			if ((value == null && other.value != null)
-					|| (value != null && other.value == null))
-				return false;
-			return value.equals(other.value);
-		}
-		
-		public int hashCode() {
-			return (value == null ? 0 : value.hashCode());
-		}
-	}
 
 	// The iterator.
 	private class ListBagIterator implements Iterator<E> {
@@ -135,15 +91,24 @@ public class ListBag<E> implements List<E> {
 	}
 	
 	// The contents of the bag.
-	private List<BagElement<E>> contents; 
+	private ArrayList<E> items; 
+	private ArrayList<Integer> counts;
 	
 	// Constructors.
 	public ListBag() {
-		contents = new ArrayList<BagElement<E>>();
+		items = new ArrayList<E>();
+		counts = new ArrayList<Integer>();
 	}
 	
-	private ListBag(List<BagElement<E>> contents) {
-		this.contents = contents;
+	private ListBag(List<E> items, List<Integer> counts) {
+		if (items instanceof ArrayList)
+			this.items = (ArrayList<E>)items;
+		else
+			this.items = new ArrayList<E>(items);
+		if (counts instanceof ArrayList)
+			this.counts = (ArrayList<Integer>)counts;
+		else
+			this.counts = new ArrayList<Integer>(counts);
 	}
 	
 	// MODIFIES: this
@@ -157,11 +122,12 @@ public class ListBag<E> implements List<E> {
 	public boolean add(E e, int amount) {
 		int i = indexOf(e);
 		if (i == -1) {
-			contents.add(new BagElement<E>(e, amount));
+			items.add(e);
+			counts.add(amount);
 		}
 		else {
-			BagElement<E> element = contents.get(i);
-			element.count += amount;
+			int newCount = counts.get(i) + amount;
+			counts.set(i, newCount);
 		}
 		return true;
 	}
@@ -177,15 +143,18 @@ public class ListBag<E> implements List<E> {
 	public void add(int index, E e, int amount) {
 		int i = indexOf(e);
 		if (i == -1) {
-			contents.add(index, new BagElement<E>(e, amount));
+			items.add(index, e);
+			counts.add(index, amount);
 		}
 		else if (i == index) {
-			contents.get(i).count += amount;
+			counts.set(index, counts.get(index) + amount);
 		}
 		else {
-			BagElement<E> element = contents.remove(i);
-			element.count += amount;
-			contents.add(index, element);
+			int newCount = counts.get(i) + amount;
+			items.add(index, e);
+			counts.add(index, newCount);
+			items.remove(i);
+			counts.remove(i);
 		}
 	}
 	
@@ -209,17 +178,13 @@ public class ListBag<E> implements List<E> {
 	// MODIFIES: this
 	// EFFECTS:  Removes all elements from this.
 	public void clear() {
-		contents.clear();
+		items.clear();
+		counts.clear();
 	}
 	
 	// EFFECTS:  Returns true if this contains at least one of the given element.
 	public boolean contains(Object o) {
-		for (int i = 0; i < contents.size(); i++) {
-			BagElement<E> element = contents.get(i);
-			if ((o == null && element.getValue() == null) || (element.getValue() != null && element.getValue().equals(o)))
-				return true;
-		}
-		return false;
+		return items.contains(o);
 	}
 	
 	// EFFECTS:  Returns true if this contains at least one of every element in the collection.
@@ -234,42 +199,22 @@ public class ListBag<E> implements List<E> {
 	// EFFECTS:  Returns true if the given list contains the same elements in the same order.
 	public boolean equals(Object o) {
 		if (o instanceof ListBag) {
-			ListBag<?> other = (ListBag<?>)o;
-			if (other.size() != contents.size())
-				return false;
-			for (int i = 0; i < contents.size(); i++) {
-				if (!other.get(i).equals(contents.get(i)))
-					return false;
-			}
-			return true;
+			return items.equals(((ListBag<?>)o).items);
 		}
 		if (o instanceof List) {
-			List<?> other = (List<?>)o;
-			if (other.size() != contents.size())
-				return false;
-			int i = 0;
-			for (Object e : other) {
-				E val = contents.get(i).getValue();
-				if ((e == null && val != null)
-						|| (e != null && val == null))
-					return false;
-				if (!e.equals(val))
-					return false;
-				i++;
-			}
-			return true;
+			return items.equals((List<?>)o);
 		}
 		return false;
 	}
 	
 	// EFFECTS:  Returns the element at the specified position in this list.
 	public E get(int index) {
-		return contents.get(index).getValue();
+		return items.get(index);
 	}
 	
 	// EFFECTS:  Returns the count of the element at the specified position in this list.
 	public int getCount(int index) {
-		return contents.get(index).getCount();
+		return counts.get(index);
 	}
 	
 	// EFFECTS:  Returns the count of the value in this list, returning 0 if none are in this.
@@ -277,13 +222,13 @@ public class ListBag<E> implements List<E> {
 		int index = indexOf(o);
 		if (index == -1)
 			return 0;
-		return contents.get(index).getCount();
+		return counts.get(index);
 	}
 	
 	// EFFECTS:  Returns the hash code value for this list. See java.util.List.hashCode() for details.
 	public int hashCode() {
 		int hashCode = 1;
-		for (BagElement<E> e : contents)
+		for (E e : items)
 			hashCode = 31 * hashCode + (e == null ? 0 : e.hashCode());
 		return hashCode;
 	}
@@ -291,17 +236,12 @@ public class ListBag<E> implements List<E> {
 	// EFFECTS:  Returns the index of the first occurrence of the specified element in this list
 	//			 or -1 if this does not contain the element.
 	public int indexOf(Object o) {
-		for (int i = 0; i < contents.size(); i++) {
-			BagElement<E> e = contents.get(i);
-			if ((o == null && e.getValue() == null) || (e.getValue() != null && e.getValue().equals(o)))
-				return i;
-		}
-		return -1;
+		return items.indexOf(o);
 	}
 	
 	// EFFECTS:  Returns true if this contains no elements.
 	public boolean isEmpty() {
-		return contents.isEmpty();
+		return items.isEmpty();
 	}
 	
 	// EFFECTS:  Returns an iterator over the elements in this list in proper sequence.
@@ -312,12 +252,7 @@ public class ListBag<E> implements List<E> {
 	// EFFECTS:  Returns the index of the last occurrence of the specified element in this list
 	//			 or -1 if this does not contain the element.
 	public int lastIndexOf(Object o) {
-		for (int i = contents.size() - 1; i > -1; i--) {
-			BagElement<E> e = contents.get(i);
-			if ((o == null && e.getValue() == null) || (e.getValue() != null && e.getValue().equals(o)))
-				return i;
-		}
-		return -1;
+		return items.lastIndexOf(o);
 	}
 	
 	// EFFECTS:  Returns a list iterator over the elements in this list in proper sequence.
@@ -328,7 +263,7 @@ public class ListBag<E> implements List<E> {
 	// EFFECTS:  Returns a list iterator over the elements in this list in proper sequence
 	//			 starting at the specified position in the list.
 	public ListIterator<E> listIterator(int index) {
-		if (index < 0 || index > contents.size())
+		if (index < 0 || index > items.size())
 			throw new IndexOutOfBoundsException();
 		return new ListBagListIterator(index);
 	}
@@ -336,10 +271,8 @@ public class ListBag<E> implements List<E> {
 	// MODIFIES: this
 	// EFFECTS:  Removes the element at the given index and sets its count to 0.
 	public E remove(int index) {
-		BagElement<E> e = contents.remove(index);
-		if (e == null)
-			return null;
-		return e.getValue();
+		counts.remove(index);
+		return items.remove(index);
 	}
 	
 	// MODIFIES: this
@@ -354,10 +287,11 @@ public class ListBag<E> implements List<E> {
 		int index = indexOf(o);
 		if (index == -1)
 			return false;
-		BagElement<E> e = contents.get(index);
-		e.setCount(e.getCount() - amount);
-		if (e.getCount() < 1)
-			contents.remove(index);
+		int newCount = counts.get(index) - amount;
+		if (newCount < 1)
+			remove(index);
+		else
+			counts.set(index, newCount);
 		return true;
 	}
 	
@@ -377,16 +311,22 @@ public class ListBag<E> implements List<E> {
 	// EFFECTS:  Remove from this list all elements that aren't in the given collection.
 	public boolean retainAll(Collection<?> c) {
 		boolean changed = false;
-		List<BagElement<E>> newContents = new ArrayList<BagElement<E>>();
-		for (int i = 0; i < contents.size(); i++) {
-			BagElement<E> element = contents.get(i);
-			if (c.contains(element.getValue()))
-				newContents.add(element);
+		ArrayList<E> newItems = new ArrayList<E>();
+		ArrayList<Integer> newCounts = new ArrayList<Integer>();
+		int size = items.size();
+		for (int i = 0; i < size; i++) {
+			E item = items.get(i);
+			if (c.contains(item)) {
+				newItems.add(item);
+				newCounts.add(counts.get(i));
+			}
 			else
 				changed = true;
 		}
-		contents.clear();
-		contents = newContents;
+		items.clear();
+		counts.clear();
+		items = newItems;
+		counts = newCounts;
 		return changed;
 	}
 	
@@ -396,27 +336,28 @@ public class ListBag<E> implements List<E> {
 	//			 If the element is already at another position in this, removes the element at the given
 	//			 position and moves the given element to the given position.
 	//			 Returns the element previously at the position.
-	public E set(int index, E element) {
-		BagElement<E> e = contents.get(index);
-		E oldVal = e.getValue();
-		int elementIndex = indexOf(element);
-		// If the element isn't already in the list, replace the element at index with the given one.
-		if (elementIndex == -1) {
-			e.setValue(element);
-			e.setCount(1);
+	public E set(int index, E newItem) {
+		E oldItem = items.get(index);
+		int newItemIndex = indexOf(newItem);
+		// If the new item isn't already in the list, replace the element at index with the given one.
+		if (newItemIndex == -1) {
+			items.set(index, newItem);
+			counts.set(index, 1);
 		}
 		// If the element is in the list, move it to the index and remove the old thing that was there.
 		else {
-			BagElement<E> elementBagElement = contents.remove(elementIndex);
-			contents.set(index, elementBagElement);
+			items.set(index, newItem);
+			counts.set(index, counts.get(newItemIndex));
+			items.remove(newItemIndex);
+			counts.remove(newItemIndex);
 		}
-		return oldVal;
+		return oldItem;
 	}
 	
 	// MODIFIES: this
 	// EFFECTS:  Sets the count at the specified index.
 	public void setCount(int index, int count) {
-		contents.get(index).setCount(count);
+		counts.set(index, count);
 	}
 	
 	// MODIFIES: this
@@ -429,44 +370,22 @@ public class ListBag<E> implements List<E> {
 	
 	// EFFECTS:  Returns the number of elements in this.
 	public int size() {
-		return contents.size();
+		return items.size();
 	}
 	
 	// EFFECTS:  Returns a view of the portion of this list of the range [fromIndex, toIndex)
 	public List<E> subList(int fromIndex, int toIndex) {
-		return new ListBag<E>(contents.subList(fromIndex, toIndex));
+		return new ListBag<E>(items.subList(fromIndex, toIndex), counts.subList(fromIndex, toIndex));
 	}
 	
-	// EFFECTS:  Returns an array containing all the elements in this list in proper sequence.
+	// EFFECTS:  Returns an array containing all the items in this list in proper sequence.
 	public Object[] toArray() {
-		Object[] out = new Object[contents.size()];
-		for (int i = 0; i < contents.size(); i++) {
-			BagElement<E> e = contents.get(i);
-			if (e == null)
-				continue;
-			out[i] = e.getValue();
-		}
-		return out;
+		return items.toArray();
 	}
 	
-	// EFFECTS:  Returns an array containing all of the elements in this list in proper sequence.
+	// EFFECTS:  Returns an array containing all of the items in this list in proper sequence.
 	//			 The runtime type of the returned array is that of the specified array.
-	@SuppressWarnings("unchecked")
 	public <T> T[] toArray(T[] a) {
-		// If the array is too small, make a new one that is big enough.
-		// Thank you, java.util.LinkedList, for showing me how to do this.
-		if (a.length < contents.size())
-			a = (T[])java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), contents.size());
-		
-		// Place the elements in the array.
-		for (int i = 0; i < contents.size(); i++) {
-			a[i] = (T)contents.get(i).getValue();
-		}
-		
-		// If the array is longer than this list, make the element immediately following the contents we just added null.
-		if (a.length > contents.size())
-			a[contents.size()] = null;
-		
-		return a; // Return the array.
+		return items.toArray(a);
 	}
 }
