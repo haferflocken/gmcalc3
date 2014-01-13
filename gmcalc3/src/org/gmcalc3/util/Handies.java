@@ -2,13 +2,18 @@ package org.gmcalc3.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Scanner;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
-public final class Handies {
+import android.graphics.Typeface;
+import android.widget.TextView;
 
+public final class Handies {
+	
 	/**
 	 * Turn a JSONArray into an array of Strings.
 	 * 
@@ -87,6 +92,53 @@ public final class Handies {
 				toSort[i] = swapA;
 				sortWith[i] = swapB;
 			}
+		}
+	}
+	
+	public static void displayInTextView(TextView view, Set<String> strings) {
+		if (strings.size() == 0) {
+			view.setText("None");
+			view.setTypeface(null, Typeface.ITALIC);
+		}
+		else {
+			String s = strings.toString();
+			view.setText(s.substring(1, s.length() - 1));
+			view.setTypeface(null, Typeface.NORMAL);
+		}
+	}
+	
+	public static void displayInTextView(TextView view, String[] strings) {
+		if (strings.length == 0) {
+			view.setText("None");
+			view.setTypeface(null, Typeface.ITALIC);
+		}
+		else {
+			String s = Arrays.toString(strings);
+			view.setText(s.substring(1, s.length() - 1));
+			view.setTypeface(null, Typeface.NORMAL);
+		}
+	}
+	
+	public static void displayInTextView(TextView view, String[][] strings) {
+		if (strings.length == 0) {
+			view.setText("None");
+			view.setTypeface(null, Typeface.ITALIC);
+		}
+		else {
+			StringBuilder builder = new StringBuilder();
+			for (String[] array : strings) {
+				if (array.length == 0) {
+					builder.append("None\n");
+				}
+				else {
+					String s = Arrays.toString(array);
+					builder.append(s.substring(1, s.length() - 1));
+					builder.append('\n');
+				}
+			}
+			builder.deleteCharAt(builder.length() - 1);
+			view.setText(builder.toString());
+			view.setTypeface(null, Typeface.NORMAL);
 		}
 	}
 }

@@ -1,0 +1,117 @@
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" >
+		
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" >
+		
+		<!-- PREFIX REQUIREMENTS -->
+		
+		<TextView 
+			android:id="@+id/prefixReqsHeader"
+			android:layout_width="match_parent"
+			android:layout_height="48sp"
+			android:layout_alignParentTop="true"
+			android:layout_alignParentLeft="true"
+			android:layout_marginLeft="12dp"
+			android:text="PREFIX REQUIREMENTS"
+			android:textColor="@color/titlestrip_text_color"
+			android:textStyle="bold"
+			android:gravity="left|center_vertical" />
+		
+		<View
+			android:background="@color/titlestrip_underline_color"
+			android:layout_width="match_parent"
+			android:layout_height="2dp"
+			android:layout_alignParentLeft="true"
+			android:layout_alignBottom="@+id/prefixReqsHeader" />
+		
+		<TextView 
+			android:id="@+id/prefixReqsContent"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_below="@+id/prefixReqsHeader"
+			android:layout_marginLeft="12dp"
+			android:layout_marginRight="12dp"
+			android:text="None"
+			android:gravity="left" />
+		
+		<!-- MATERIAL REQUIREMENTS -->
+		
+		<TextView 
+			android:id="@+id/materialReqsHeader"
+			android:layout_width="match_parent"
+			android:layout_height="48sp"
+			android:layout_alignParentLeft="true"
+			android:layout_below="@+id/prefixReqsContent"
+			android:layout_marginLeft="12dp"
+			android:text="MATERIAL REQUIREMENTS"
+			android:textColor="@color/titlestrip_text_color"
+			android:textStyle="bold"
+			android:gravity="left|center_vertical" />
+		
+		<View
+			android:background="@color/titlestrip_underline_color"
+			android:layout_width="match_parent"
+			android:layout_height="2dp"
+			android:layout_alignParentLeft="true"
+			android:layout_alignBottom="@+id/materialReqsHeader" />
+		
+		<TextView 
+			android:id="@+id/materialReqsContent"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_below="@+id/materialReqsHeader"
+			android:layout_marginLeft="12dp"
+			android:layout_marginRight="12dp"
+			android:text="None"
+			android:gravity="left" />
+		
+		<!-- DEFAULT MATERIALS -->
+		
+		<TextView 
+			android:id="@+id/defaultMaterialsHeader"
+			android:layout_width="match_parent"
+			android:layout_height="48sp"
+			android:layout_alignParentLeft="true"
+			android:layout_below="@+id/materialReqsContent"
+			android:layout_marginLeft="12dp"
+			android:text="DEFAULT MATERIALS"
+			android:textColor="@color/titlestrip_text_color"
+			android:textStyle="bold"
+			android:gravity="left|center_vertical" />
+		
+		<View
+			android:background="@color/titlestrip_underline_color"
+			android:layout_width="match_parent"
+			android:layout_height="2dp"
+			android:layout_alignParentLeft="true"
+			android:layout_alignBottom="@+id/defaultMaterialsHeader" />
+		
+		<TextView 
+			android:id="@+id/defaultMaterialsContent"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_below="@+id/defaultMaterialsHeader"
+			android:layout_marginLeft="12dp"
+			android:layout_marginRight="12dp"
+			android:text="None"
+			android:gravity="left" />
+		
+		<!-- COMPONENT DETAILS -->
+		
+		<include
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_below="@+id/defaultMaterialsContent"
+			layout="@layout/layout_component_detail" />
+		
+	</RelativeLayout>
+	
+</ScrollView>

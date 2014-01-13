@@ -1,11 +1,13 @@
 package org.gmcalc3;
 
+import org.gmcalc3.util.Handies;
 import org.gmcalc3.world.Component;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 public class ComponentDetailActivity extends Activity {
 	
@@ -34,8 +36,8 @@ public class ComponentDetailActivity extends Activity {
 			return;
 		}
 		
-		// Set the title to the component name.
-		setTitle(component.getName());
+		// Display the component.
+		displayComponent();
 	}
 	
 	@Override
@@ -52,5 +54,22 @@ public class ComponentDetailActivity extends Activity {
 		Intent out = new Intent(this, WorldDetailActivity.class);
 		out.putExtra(WorldDetailActivity.BUNDLE_WORLD, component.getWorld());
 		return out;
+	}
+	
+	private void displayComponent() {
+		// Show the component's name in the action bar.
+		setTitle(component.getName());
+		
+		// Display the component's stats.
+		TextView statDisplay = (TextView)findViewById(R.id.statsContent);
+		statDisplay.setText(component.getStatMap().toDisplayString());
+		
+		// Display the component's tags.
+		TextView tagDisplay = (TextView)findViewById(R.id.tagsContent);
+		Handies.displayInTextView(tagDisplay, component.getTags());
+		
+		// Display the component's other info.
+		TextView otherDisplay = (TextView)findViewById(R.id.otherContent);
+		otherDisplay.setText("Rarity: " + component.getRarity());
 	}
 }

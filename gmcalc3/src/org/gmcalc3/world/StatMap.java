@@ -125,6 +125,20 @@ public class StatMap {
 		return out;
 	}
 	
+	// Get the map as a single display string.
+	public String toDisplayString() {
+		StringBuilder out = new StringBuilder();
+		for (Map.Entry<String, Stat> entry : stats.entrySet()) {
+			out.append(entry.getKey());
+			out.append(": ");
+			out.append(entry.getValue().toString());
+			out.append('\n');
+		}
+		if (out.length() > 0)
+			out.deleteCharAt(out.length() - 1);
+		return out.toString();
+	}
+	
 	// Get the stat for a key.
 	public Stat get(String key) {
 		return stats.get(key);

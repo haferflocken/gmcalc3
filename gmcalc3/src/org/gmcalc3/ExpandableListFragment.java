@@ -33,7 +33,7 @@ public class ExpandableListFragment extends Fragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.expandable_list_view_layout, container, false);
+		return inflater.inflate(R.layout.layout_expandable_list_view, container, false);
 	}
 	
 	@Override
@@ -101,7 +101,7 @@ public class ExpandableListFragment extends Fragment {
 			return;
 		myList.setOnItemClickListener(myOnClickListener);
 		if (myAdapter != null) {
-			setExpandableListAdapter(myAdapter);
+			myList.setAdapter(myAdapter);
 		}
 	}
 }

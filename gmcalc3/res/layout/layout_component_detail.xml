@@ -1,0 +1,97 @@
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/com/astuetz"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" >
+	
+	<TextView 
+		android:id="@+id/statsHeader"
+		android:layout_width="match_parent"
+		android:layout_height="48sp"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentLeft="true"
+		android:layout_marginLeft="12dp"
+		android:text="STATS"
+		android:textColor="@color/titlestrip_text_color"
+		android:textStyle="bold"
+		android:gravity="left|center_vertical" />
+	
+	<View
+		android:background="@color/titlestrip_underline_color"
+		android:layout_width="match_parent"
+		android:layout_height="2dp"
+		android:layout_alignParentLeft="true"
+		android:layout_alignBottom="@+id/statsHeader" />
+	
+	<TextView 
+		android:id="@+id/statsContent"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_below="@+id/statsHeader"
+		android:layout_marginLeft="12dp"
+		android:layout_marginRight="12dp"
+		android:text="None"
+		android:gravity="left" />
+	
+	<TextView 
+		android:id="@+id/tagsHeader"
+		android:layout_width="match_parent"
+		android:layout_height="48sp"
+		android:layout_alignParentLeft="true"
+		android:layout_below="@+id/statsContent"
+		android:layout_marginLeft="12dp"
+		android:text="TAGS"
+		android:textColor="@color/titlestrip_text_color"
+		android:textStyle="bold"
+		android:gravity="left|center_vertical" />
+	
+	<View
+		android:background="@color/titlestrip_underline_color"
+		android:layout_width="match_parent"
+		android:layout_height="2dp"
+		android:layout_alignParentLeft="true"
+		android:layout_alignBottom="@+id/tagsHeader" />
+	
+	<TextView 
+		android:id="@+id/tagsContent"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_below="@+id/tagsHeader"
+		android:layout_marginLeft="12dp"
+		android:layout_marginRight="12dp"
+		android:text="None"
+		android:gravity="left" />
+	
+	<TextView 
+		android:id="@+id/otherHeader"
+		android:layout_width="match_parent"
+		android:layout_height="48sp"
+		android:layout_alignParentLeft="true"
+		android:layout_below="@+id/tagsContent"
+		android:layout_marginLeft="12dp"
+		android:text="OTHER"
+		android:textColor="@color/titlestrip_text_color"
+		android:textStyle="bold"
+		android:gravity="left|center_vertical" />
+	
+	<View
+		android:background="@color/titlestrip_underline_color"
+		android:layout_width="match_parent"
+		android:layout_height="2dp"
+		android:layout_alignParentLeft="true"
+		android:layout_alignBottom="@+id/otherHeader" />
+	
+	<TextView 
+		android:id="@+id/otherContent"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_below="@+id/otherHeader"
+		android:layout_marginLeft="12dp"
+		android:layout_marginRight="12dp"
+		android:text="None"
+		android:gravity="left" />
+	
+</RelativeLayout>

@@ -162,7 +162,7 @@ public class WorldFactory implements Factory<World> {
 		// Place the world in the loaded worlds map.
 		loadedWorlds.put(fileName, world);
 				
-		world.logContents();
+		//world.logContents();
 		
 		loadIndex++;
 	}
