@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Set;
 
+import org.gmcalc3.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -95,9 +96,15 @@ public final class Handies {
 		}
 	}
 	
+	/**
+	 * Displays a set of strings in a TextView, or "None" in italics if the set is empty.
+	 * 
+	 * @param view
+	 * @param strings
+	 */
 	public static void displayInTextView(TextView view, Set<String> strings) {
 		if (strings.size() == 0) {
-			view.setText("None");
+			view.setText(R.string.component_detail_none);
 			view.setTypeface(null, Typeface.ITALIC);
 		}
 		else {
@@ -107,9 +114,15 @@ public final class Handies {
 		}
 	}
 	
+	/**
+	 * Displays an array of strings in a TextView, or "None" in italics if the array is length 0.
+	 * 
+	 * @param view
+	 * @param strings
+	 */
 	public static void displayInTextView(TextView view, String[] strings) {
 		if (strings.length == 0) {
-			view.setText("None");
+			view.setText(R.string.component_detail_none);
 			view.setTypeface(null, Typeface.ITALIC);
 		}
 		else {
@@ -119,22 +132,29 @@ public final class Handies {
 		}
 	}
 	
+	/**
+	 * Displays a 2D array of strings in a text view, each array on a new line, or "None" in italics
+	 * if the array length is zero.
+	 * 
+	 * @param view
+	 * @param strings
+	 */
 	public static void displayInTextView(TextView view, String[][] strings) {
 		if (strings.length == 0) {
-			view.setText("None");
+			view.setText(R.string.component_detail_none);
 			view.setTypeface(null, Typeface.ITALIC);
 		}
 		else {
 			StringBuilder builder = new StringBuilder();
 			for (String[] array : strings) {
 				if (array.length == 0) {
-					builder.append("None\n");
+					builder.append(R.string.component_detail_none);
 				}
 				else {
 					String s = Arrays.toString(array);
 					builder.append(s.substring(1, s.length() - 1));
-					builder.append('\n');
 				}
+				builder.append('\n');
 			}
 			builder.deleteCharAt(builder.length() - 1);
 			view.setText(builder.toString());

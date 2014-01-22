@@ -16,7 +16,7 @@
 			android:layout_alignParentTop="true"
 			android:layout_alignParentLeft="true"
 			android:layout_marginLeft="12dp"
-			android:text="PREFIX REQUIREMENTS"
+			android:text="@string/itembase_detail_prefix_requirements"
 			android:textColor="@color/titlestrip_text_color"
 			android:textStyle="bold"
 			android:gravity="left|center_vertical" />
@@ -36,7 +36,7 @@
 			android:layout_below="@+id/prefixReqsHeader"
 			android:layout_marginLeft="12dp"
 			android:layout_marginRight="12dp"
-			android:text="None"
+			android:text="@string/component_detail_none"
 			android:gravity="left" />
 		
 		<!-- MATERIAL REQUIREMENTS -->
@@ -48,7 +48,7 @@
 			android:layout_alignParentLeft="true"
 			android:layout_below="@+id/prefixReqsContent"
 			android:layout_marginLeft="12dp"
-			android:text="MATERIAL REQUIREMENTS"
+			android:text="@string/itembase_detail_material_requirements"
 			android:textColor="@color/titlestrip_text_color"
 			android:textStyle="bold"
 			android:gravity="left|center_vertical" />
@@ -68,7 +68,7 @@
 			android:layout_below="@+id/materialReqsHeader"
 			android:layout_marginLeft="12dp"
 			android:layout_marginRight="12dp"
-			android:text="None"
+			android:text="@string/component_detail_none"
 			android:gravity="left" />
 		
 		<!-- DEFAULT MATERIALS -->
@@ -80,7 +80,7 @@
 			android:layout_alignParentLeft="true"
 			android:layout_below="@+id/materialReqsContent"
 			android:layout_marginLeft="12dp"
-			android:text="DEFAULT MATERIALS"
+			android:text="@string/itembase_detail_default_materials"
 			android:textColor="@color/titlestrip_text_color"
 			android:textStyle="bold"
 			android:gravity="left|center_vertical" />
@@ -100,7 +100,7 @@
 			android:layout_below="@+id/defaultMaterialsHeader"
 			android:layout_marginLeft="12dp"
 			android:layout_marginRight="12dp"
-			android:text="None"
+			android:text="@string/component_detail_none"
 			android:gravity="left" />
 		
 		<!-- COMPONENT DETAILS -->

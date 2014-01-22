@@ -11,7 +11,7 @@
 		android:layout_alignParentTop="true"
 		android:layout_alignParentLeft="true"
 		android:layout_marginLeft="12dp"
-		android:text="STATS"
+		android:text="@string/component_detail_stats"
 		android:textColor="@color/titlestrip_text_color"
 		android:textStyle="bold"
 		android:gravity="left|center_vertical" />
@@ -31,7 +31,7 @@
 		android:layout_below="@+id/statsHeader"
 		android:layout_marginLeft="12dp"
 		android:layout_marginRight="12dp"
-		android:text="None"
+		android:text="@string/component_detail_none"
 		android:gravity="left" />
 	
 	<TextView 
@@ -41,7 +41,7 @@
 		android:layout_alignParentLeft="true"
 		android:layout_below="@+id/statsContent"
 		android:layout_marginLeft="12dp"
-		android:text="TAGS"
+		android:text="@string/component_detail_tags"
 		android:textColor="@color/titlestrip_text_color"
 		android:textStyle="bold"
 		android:gravity="left|center_vertical" />
@@ -61,7 +61,7 @@
 		android:layout_below="@+id/tagsHeader"
 		android:layout_marginLeft="12dp"
 		android:layout_marginRight="12dp"
-		android:text="None"
+		android:text="@string/component_detail_none"
 		android:gravity="left" />
 	
 	<TextView 
@@ -71,7 +71,7 @@
 		android:layout_alignParentLeft="true"
 		android:layout_below="@+id/tagsContent"
 		android:layout_marginLeft="12dp"
-		android:text="OTHER"
+		android:text="@string/component_detail_other"
 		android:textColor="@color/titlestrip_text_color"
 		android:textStyle="bold"
 		android:gravity="left|center_vertical" />
@@ -91,7 +91,7 @@
 		android:layout_below="@+id/otherHeader"
 		android:layout_marginLeft="12dp"
 		android:layout_marginRight="12dp"
-		android:text="None"
+		android:text="@string/component_detail_none"
 		android:gravity="left" />
 	
 </RelativeLayout>

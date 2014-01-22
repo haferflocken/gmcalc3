@@ -11,6 +11,13 @@
     <string name="label_component_detail">Component Detail</string><string name="label_itembase_detail">ItemBase Detail</string><string name="label_world_detail">World Detail</string>
     <string name="character_detail_stats">STATS</string><string name="character_detail_equipped">EQUIPPED</string><string name="character_detail_inventory">INVENTORY</string>
     <string name="world_detail_characters">Characters</string><string name="world_detail_prefixes">Prefixes</string><string name="world_detail_materials">Materials</string><string name="world_detail_itembases">Item Bases</string>
+    <string name="component_detail_stats">STATS</string>
+    <string name="component_detail_tags">TAGS</string>
+    <string name="component_detail_other">OTHER</string>
+    <string name="component_detail_none">None</string>
+    <string name="itembase_detail_prefix_requirements">PREFIX REQUIREMENTS</string>
+    <string name="itembase_detail_material_requirements">MATERIAL REQUIREMENTS</string>
+    <string name="itembase_detail_default_materials">DEFAULT MATERIALS</string>
     
 
 </resources>
